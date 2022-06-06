@@ -1,8 +1,7 @@
 import java.io.IOException;
 
 public class BIMG {
-    private IMode[] frames;
-    private final String version = "pre-release";
+    private final IMode[] frames;
     private boolean metadataWritten = false;
     private boolean finalized = false;
     StringBuilder file = new StringBuilder();
@@ -55,14 +54,14 @@ public class BIMG {
 
     public void writeKeyValuePair(String key, boolean value) {
         if (!finalized) {
-            file.append(key).append("=").append(String.valueOf(value));
+            file.append(key).append("=").append(value);
             file.append(",");
         }
     }
 
     public void writeKeyValuePair(String key, double value) {
         if (!finalized) {
-            file.append(key).append("=").append(String.valueOf(value));
+            file.append(key).append("=").append(value);
             file.append(",");
         }
     }
@@ -80,6 +79,7 @@ public class BIMG {
 
     public void writeMetadata() {
         if (!metadataWritten && !finalized) {
+            final String version = "1.0.0";
             writeKeyValuePair("version", version);
             writeKeyValuePair("creator", "Java BIMG Generator");
             if (frames.length > 1)

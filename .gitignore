@@ -2,3 +2,5 @@
 *.png
 *.bimg
 out/
+*.csv
+*.gif

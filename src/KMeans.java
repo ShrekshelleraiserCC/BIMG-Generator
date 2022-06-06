@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class KMeans {
     public static int[] applyKMeans(BufferedImage image, int K) {
@@ -54,6 +55,30 @@ public class KMeans {
                 centroidsStayedPut = centroidsStayedPut && centroidPoints[i].setLocation(averageCentroidLocation[i]);
             }
             iterations++;
+        }
+        final boolean saveCSV = false;
+        if (saveCSV) {
+            StringBuilder csvData = new StringBuilder();
+            for (Record record : recordPoints) {
+                csvData.append(record.location[0]).append(",").append(record.location[1])
+                        .append(",").append(record.location[2]).append("\n");
+            }
+            try {
+                ImageMaker.writeToFile("data.csv", ImageMaker.stringToInt(csvData.toString()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            csvData = new StringBuilder();
+            for (Centroid centroid : centroidPoints) {
+                csvData.append(centroid.location[0]).append(",").append(centroid.location[1])
+                        .append(",").append(centroid.location[2]).append("\n");
+            }
+            try {
+                ImageMaker.writeToFile("centroid.csv", ImageMaker.stringToInt(csvData.toString()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         int[] returnValue = new int[K];
         for (int i = 0; i < K; i++) {

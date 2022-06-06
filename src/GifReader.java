@@ -2,19 +2,16 @@ import org.w3c.dom.*;
 import javax.imageio.*;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
 
 public class GifReader {
     public static BufferedImage[] openGif(File file) {
         BufferedImage[] frames = new BufferedImage[0];
         int length = 0;
+        int framesProcessed = 0;
+        int noi = 0;
         try {
             String[] imageatt = new String[]{
                     "imageLeftPosition",
@@ -23,17 +20,16 @@ public class GifReader {
                     "imageHeight"
             };
 
-            ImageReader reader = (ImageReader) ImageIO.getImageReadersByFormatName("gif").next();
+            ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
             ImageInputStream ciis = ImageIO.createImageInputStream(file);
             reader.setInput(ciis, false);
 
-            int noi = reader.getNumImages(true);
+            noi = reader.getNumImages(true);
             BufferedImage master = null;
             frames = new BufferedImage[noi];
-            length = 0;
-            for (int i = 0; i < noi; i++) {
-                BufferedImage image = reader.read(i);
-                IIOMetadata metadata = reader.getImageMetadata(i);
+            for (framesProcessed = 0; framesProcessed < noi; framesProcessed++) {
+                BufferedImage image = reader.read(framesProcessed);
+                IIOMetadata metadata = reader.getImageMetadata(framesProcessed);
 
                 Node tree = metadata.getAsTree("javax_imageio_gif_image_1.0");
                 NodeList children = tree.getChildNodes();
@@ -42,14 +38,14 @@ public class GifReader {
                     Node nodeItem = children.item(j);
 
                     if (nodeItem.getNodeName().equals("ImageDescriptor")) {
-                        Map<String, Integer> imageAttr = new HashMap<String, Integer>();
+                        Map<String, Integer> imageAttr = new HashMap<>();
 
-                        for (int k = 0; k < imageatt.length; k++) {
+                        for (String s : imageatt) {
                             NamedNodeMap attr = nodeItem.getAttributes();
-                            Node attnode = attr.getNamedItem(imageatt[k]);
-                            imageAttr.put(imageatt[k], Integer.valueOf(attnode.getNodeValue()));
+                            Node attnode = attr.getNamedItem(s);
+                            imageAttr.put(s, Integer.valueOf(attnode.getNodeValue()));
                         }
-                        if (i == 0) {
+                        if (framesProcessed == 0) {
                             master = new BufferedImage(imageAttr.get("imageWidth"), imageAttr.get("imageHeight"),
                                     BufferedImage.TYPE_INT_ARGB);
                         }
@@ -58,16 +54,15 @@ public class GifReader {
 
                     }
                 }
-                frames[i] = copyImage(master);
-                length = i;
+                frames[framesProcessed] = copyImage(master);
+                length = framesProcessed;
             }
         } catch (IOException e) {
-            System.out.println("In most cases you can ignore this error!");
-            e.printStackTrace();
+            System.out.println("<eof> reached after reading " + framesProcessed + " frames (of suppposed "
+                    + noi + " frames)");
         }
         BufferedImage[] rFrames = new BufferedImage[length];
-        for (int i = 0; i < length; i++)
-            rFrames[i] = frames[i];
+        System.arraycopy(frames, 0, rFrames, 0, length);
         return rFrames;
     }
 

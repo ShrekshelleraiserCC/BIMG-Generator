@@ -28,6 +28,7 @@ public class ImageMaker {
         boolean doDither = false;
         boolean savePostImage = false;
         double secondsPerFrame = 0.2;
+        boolean uncapResolution = false;
         String postImagePath = "";
         CommandLine commandLine;
         Option option_postImageFile = Option.builder("post")
@@ -63,6 +64,12 @@ public class ImageMaker {
                 .desc("Seconds per frame")
                 .hasArg(true)
                 .build();
+        Option option_uncapResolution = Option.builder()
+                .required(false)
+                .desc("Uncap the resolution")
+                .longOpt("uncapresolution")
+                .hasArg(false)
+                .build();
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
 
@@ -72,6 +79,7 @@ public class ImageMaker {
         options.addOption(option_customPalette);
         options.addOption(option_autoPalette);
         options.addOption(option_secondsPerFrame);
+        options.addOption(option_uncapResolution);
 
         System.out.println("BIMG Image Generator version " + VERSION);
 
@@ -83,9 +91,8 @@ public class ImageMaker {
                 postImagePath = commandLine.getOptionValue("post");
             }
 
-            if (commandLine.hasOption("d")) {
-                doDither = true;
-            }
+            doDither = (commandLine.hasOption("d"));
+            uncapResolution = (commandLine.hasOption(option_uncapResolution));
 
             if (commandLine.hasOption("hd")) {
                 mode = IM_MODE.HD;
@@ -133,6 +140,28 @@ public class ImageMaker {
                 IMode[] im = new IMode[imageArr.length];
                 for (int i = 0; i < imageArr.length; i++) {
                     BufferedImage inputImage = imageArr[i];
+                    if (!uncapResolution) {
+                        final int MAX_WIDTH_HIGH = 102;
+                        final int MAX_HEIGHT_HIGH = 57;
+                        final int MAX_WIDTH_LOW = 51;
+                        final int MAX_HEIGHT_LOW = 19;
+                        if (inputImage.getWidth() > ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_WIDTH_HIGH
+                                : MAX_WIDTH_LOW)) {
+                            double scale = ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_WIDTH_HIGH
+                                    : MAX_WIDTH_LOW) / (double) inputImage.getWidth();
+                            inputImage = Mode.scaleImage(inputImage, scale, scale);
+                            System.out.println("Image is too wide, resizing!");
+                        }
+                        if (inputImage.getHeight() > ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_HEIGHT_HIGH
+                                : MAX_HEIGHT_LOW) / (double) inputImage.getWidth()) {
+                            double scale = ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_HEIGHT_HIGH
+                                    : MAX_HEIGHT_LOW) / (double) inputImage.getWidth();
+                            inputImage = Mode.scaleImage(inputImage, scale, scale);
+                            System.out.println("Image is too tall, resizing!");
+                        }
+                        System.out.println("Final resolution is " + inputImage.getWidth() + " by "
+                                + inputImage.getHeight());
+                    }
                     long startTime = System.nanoTime();
                     im[i] = switch (mode) {
                         case HD -> new ModeHighDensity(inputImage, palette, doDither);

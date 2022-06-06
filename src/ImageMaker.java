@@ -1,15 +1,15 @@
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
-
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FilenameUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Objects;
+
 public class ImageMaker {
-    static final int VERSION = -3;
+    static final int VERSION = 1;
     public static final Palette defaultPalette = new Palette(new int[]{0xf0f0f0, 0xf2b233, 0xe57fd8, 0x99b2f2, 0xdede6c,
             0x7fcc19, 0xf2b2cc, 0x4c4c4c, 0x999999, 0x4c99b2, 0xb266e5, 0x3366cc, 0x7f664c, 0x57a64e, 0xcc4c4c, 0x111111});
     static Palette palette = defaultPalette;
@@ -22,6 +22,7 @@ public class ImageMaker {
     }
 
     static IM_MODE mode = IM_MODE.LD;
+
     // default CC palette
     public static void main(String[] args) {
         boolean showHelp = false;

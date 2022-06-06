@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class ImageMaker {
-    static final int VERSION = 1;
+    static final int VERSION = 2;
     public static final Palette defaultPalette = new Palette(new int[]{0xf0f0f0, 0xf2b233, 0xe57fd8, 0x99b2f2, 0xdede6c,
             0x7fcc19, 0xf2b2cc, 0x4c4c4c, 0x999999, 0x4c99b2, 0xb266e5, 0x3366cc, 0x7f664c, 0x57a64e, 0xcc4c4c, 0x111111});
     static Palette palette = defaultPalette;
@@ -20,7 +20,6 @@ public class ImageMaker {
         HD_AUTO,
         LD_AUTO
     }
-
     static IM_MODE mode = IM_MODE.LD;
 
     // default CC palette
@@ -30,6 +29,7 @@ public class ImageMaker {
         boolean savePostImage = false;
         double secondsPerFrame = 0.2;
         boolean uncapResolution = false;
+        IM_FILETYPE filetype = IM_FILETYPE.BIMG;
         String postImagePath = "";
         CommandLine commandLine;
         Option option_postImageFile = Option.builder("post")
@@ -71,6 +71,11 @@ public class ImageMaker {
                 .longOpt("uncapresolution")
                 .hasArg(false)
                 .build();
+        Option option_bbf = Option.builder("bbf")
+                .required(false)
+                .desc("Save output in bbf format")
+                .hasArg(false)
+                .build();
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
 
@@ -81,6 +86,7 @@ public class ImageMaker {
         options.addOption(option_autoPalette);
         options.addOption(option_secondsPerFrame);
         options.addOption(option_uncapResolution);
+        options.addOption(option_bbf);
 
         System.out.println("BIMG Image Generator version " + VERSION);
 
@@ -124,6 +130,9 @@ public class ImageMaker {
                 secondsPerFrame = Double.parseDouble(commandLine.getOptionValue("spf"));
             args = commandLine.getArgs(); // reset args to contain JUST the needed information
 
+            if (commandLine.hasOption(option_bbf))
+                filetype = IM_FILETYPE.BBF;
+
         } catch (org.apache.commons.cli.ParseException exception) {
             showHelp = true;
         }
@@ -150,15 +159,15 @@ public class ImageMaker {
                                 : MAX_WIDTH_LOW)) {
                             double scale = ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_WIDTH_HIGH
                                     : MAX_WIDTH_LOW) / (double) inputImage.getWidth();
+                            System.out.println("Image is too wide, resizing! Was " + inputImage.getWidth() + " by " + inputImage.getHeight());
                             inputImage = Mode.scaleImage(inputImage, scale, scale);
-                            System.out.println("Image is too wide, resizing!");
                         }
                         if (inputImage.getHeight() > ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_HEIGHT_HIGH
-                                : MAX_HEIGHT_LOW) / (double) inputImage.getWidth()) {
+                                : MAX_HEIGHT_LOW)) {
                             double scale = ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_HEIGHT_HIGH
-                                    : MAX_HEIGHT_LOW) / (double) inputImage.getWidth();
+                                    : MAX_HEIGHT_LOW) / (double) inputImage.getHeight();
+                            System.out.println("Image is too tall, resizing! Was " + inputImage.getWidth() + " by " + inputImage.getHeight());
                             inputImage = Mode.scaleImage(inputImage, scale, scale);
-                            System.out.println("Image is too tall, resizing!");
                         }
                         System.out.println("Final resolution is " + inputImage.getWidth() + " by "
                                 + inputImage.getHeight());
@@ -182,16 +191,23 @@ public class ImageMaker {
                                     new File(postImagePath));
                         }
                         endTime = System.nanoTime();
-                        System.out.println("Wrote post image in " + (endTime - startTime)/1000000.0f + "ms.");
+                        System.out.println("Wrote post image in " + (endTime - startTime) / 1000000.0f + "ms.");
                     }
                 }
                 long startTime = System.nanoTime();
-                BIMG bimg = new BIMG(im);
-                if (imageArr.length > 1)
-                    bimg.writeKeyValuePair("secondsPerFrame", secondsPerFrame);
-                bimg.save(args[1]);
-                long endTime = System.nanoTime();
-                System.out.println("Wrote bimg in " + (endTime - startTime)/1000000.0f + "ms.");
+                if (filetype == IM_FILETYPE.BIMG) {
+                    BIMG bimg = new BIMG(im);
+                    if (imageArr.length > 1)
+                        bimg.writeKeyValuePair("secondsPerFrame", secondsPerFrame);
+                    bimg.save(args[1]);
+                    long endTime = System.nanoTime();
+                    System.out.println("Wrote bimg in " + (endTime - startTime) / 1000000.0f + "ms.");
+                } else if (filetype == IM_FILETYPE.BBF) {
+                    BBF bbf = new BBF(im);
+                    bbf.save(args[1]);
+                    long endTime = System.nanoTime();
+                    System.out.println("Wrote bbf in " + (endTime - startTime) / 1000000.0f + "ms.");
+                }
 
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -215,6 +231,11 @@ public class ImageMaker {
             formatter.printHelp("BIMG input output",
                     header, options, footer, true);
         }
+    }
+
+    enum IM_FILETYPE {
+        BIMG,
+        BBF
     }
 
     static void writeToFile(String filename, int[] data) throws IOException {

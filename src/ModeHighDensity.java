@@ -2,7 +2,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 public class ModeHighDensity implements IMode {
-    private Palette palette;
+    private final Palette palette;
     private final int width;
     private final int height;
     private final PaletteImage image;
@@ -100,6 +100,16 @@ public class ModeHighDensity implements IMode {
     @Override
     public Palette getPalette() {
         return palette;
+    }
+
+    @Override
+    public int getWidth() {
+        return width / 2;
+    }
+
+    @Override
+    public int getHeight() {
+        return height / 3;
     }
 
 }

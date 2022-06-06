@@ -1,8 +1,7 @@
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 public class ModeLowDensity implements IMode {
-    private Palette palette;
+    private final Palette palette;
     private final int width;
     private final int height;
     private final PaletteImage image;
@@ -44,6 +43,17 @@ public class ModeLowDensity implements IMode {
     public Palette getPalette() {
         return palette;
     }
+
+    @Override
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getHeight() {
+        return height;
+    }
+
     public BufferedImage getImage() {
         return Mode.scaleImage(image.toImage(), 2, 3);
     }

@@ -1,9 +1,13 @@
 import java.awt.image.BufferedImage;
 
 public interface IMode {
-    public String[][] get();
+    String[][] get();
 
-    public BufferedImage getImage();
+    BufferedImage getImage();
 
     Palette getPalette();
+
+    int getWidth();
+
+    int getHeight();
 }

@@ -2,7 +2,8 @@
 
 This is a java program to convert just about any format of image
 to the [BIMG](https://github.com/SkyTheCodeMaster/bimg) blit image
-format for ComputerCraft.
+format for ComputerCraft. Also has support for
+[bbf](https://github.com/9551-Dev/BLBFOR), a binary blit image format.
 
 GIF animations are supported, though I've noticed sometimes
 frames go missing. Images are automatically scaled to fit within
@@ -25,4 +26,5 @@ Convert an image into an bimg file.
 -post <arg>            Output processed image to path
 -spf <arg>             Seconds per frame
 --uncapresolution   Uncap the resolution
+-bbf                   Save output in bbf format
 ```

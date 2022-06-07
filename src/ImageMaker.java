@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class ImageMaker {
-    static final int VERSION = 2;
+    static final int VERSION = 3;
     public static final Palette defaultPalette = new Palette(new int[]{0xf0f0f0, 0xf2b233, 0xe57fd8, 0x99b2f2, 0xdede6c,
             0x7fcc19, 0xf2b2cc, 0x4c4c4c, 0x999999, 0x4c99b2, 0xb266e5, 0x3366cc, 0x7f664c, 0x57a64e, 0xcc4c4c, 0x111111});
     static Palette palette = defaultPalette;
@@ -25,10 +25,10 @@ public class ImageMaker {
     // default CC palette
     public static void main(String[] args) {
         boolean showHelp = false;
-        boolean doDither = false;
         boolean savePostImage = false;
         double secondsPerFrame = 0.2;
         boolean uncapResolution = false;
+        IDither dither = new DitherNone();
         IM_FILETYPE filetype = IM_FILETYPE.BIMG;
         String postImagePath = "";
         CommandLine commandLine;
@@ -39,9 +39,15 @@ public class ImageMaker {
                 .build();
         Option option_doDither = Option.builder("d")
                 .required(false)
-                .desc("Do dithering")
+                .desc("Do Floyd-Steinberg dithering")
                 .longOpt("dither")
                 .hasArg(false)
+                .build();
+        Option option_doOrderedDither = Option.builder("ordered")
+                .required(false)
+                .desc("Do ordered dithering")
+                .valueSeparator(',')
+                .hasArgs()
                 .build();
         Option option_highDensity = Option.builder("hd")
                 .required(false)
@@ -81,6 +87,7 @@ public class ImageMaker {
 
         options.addOption(option_postImageFile);
         options.addOption(option_doDither);
+        options.addOption(option_doOrderedDither);
         options.addOption(option_highDensity);
         options.addOption(option_customPalette);
         options.addOption(option_autoPalette);
@@ -98,7 +105,19 @@ public class ImageMaker {
                 postImagePath = commandLine.getOptionValue("post");
             }
 
-            doDither = (commandLine.hasOption("d"));
+            if (commandLine.hasOption("d"))
+                dither = new DitherFloydSteinberg();
+            else if (commandLine.hasOption("ordered")) {
+                try {
+                    int thresholdMapSize = Integer.decode(commandLine.getOptionValues("ordered")[0]);
+                    double colorSpread = Double.parseDouble(commandLine.getOptionValues("ordered")[1]);
+                    dither = new DitherOrdered(thresholdMapSize, colorSpread);
+                } catch (NumberFormatException e) {
+                    System.out.println("Please provide the threshold map size and color spread. Example usage: ");
+                    System.out.println("-ordered 4,50");
+                }
+            }
+
             uncapResolution = (commandLine.hasOption(option_uncapResolution));
 
             if (commandLine.hasOption("hd")) {
@@ -174,10 +193,10 @@ public class ImageMaker {
                     }
                     long startTime = System.nanoTime();
                     im[i] = switch (mode) {
-                        case HD -> new ModeHighDensity(inputImage, palette, doDither);
-                        case LD -> new ModeLowDensity(inputImage, palette, doDither);
-                        case HD_AUTO -> new ModeHighDensity(inputImage, doDither);
-                        case LD_AUTO -> new ModeLowDensity(inputImage, doDither);
+                        case HD -> new ModeHighDensity(inputImage, palette, dither);
+                        case LD -> new ModeLowDensity(inputImage, palette, dither);
+                        case HD_AUTO -> new ModeHighDensity(inputImage, dither);
+                        case LD_AUTO -> new ModeLowDensity(inputImage, dither);
                     };
                     long endTime = System.nanoTime();
                     System.out.println("Quantized image in " + (endTime - startTime)/1000000.0f + "ms.");
@@ -214,21 +233,12 @@ public class ImageMaker {
             }
         }
         if (showHelp) {
-            // An issue has occurred with the args, print help and exit.
-            // args should contain:
-            // mode inputFile outputFile
-            // Valid modes are:
-            // 2b0L, 2b1L, 2b5L - 2bit per pixel palette/mode intensity
-            // 2b0H, 2b1H, 2b5H
-            // 1b - 1bit per pixel
-            // 2Bo0, 2Bo1, 2bo - 2byte per pixel old/new subpalette
-            // 2Bn0, 2Bn1, 2Bn
             String header = "Convert an image into an bimg file.\n\n";
             String footer = """
                     """;
 
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("BIMG input output",
+            formatter.printHelp("BIMG <input> <output>",
                     header, options, footer, true);
         }
     }

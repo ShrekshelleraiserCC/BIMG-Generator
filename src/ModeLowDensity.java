@@ -5,14 +5,14 @@ public class ModeLowDensity implements IMode {
     private final int width;
     private final int height;
     private final PaletteImage image;
-    ModeLowDensity(BufferedImage image, Palette palette, boolean dither) {
+    ModeLowDensity(BufferedImage image, Palette palette, IDither dither) {
         this.palette = palette;
         this.image = new PaletteImage(image, this.palette, dither);
         this.width = this.image.getWidth();
         this.height = this.image.getHeight();
     }
 
-    ModeLowDensity(BufferedImage image, boolean dither) {
+    ModeLowDensity(BufferedImage image, IDither dither) {
         this(image, new Palette(KMeans.applyKMeans(image, 16)), dither);
     }
 

@@ -1,15 +1,16 @@
 import java.awt.image.BufferedImage;
 
 public class PaletteImage {
-    private int[][] imageArray;
-    private int width;
-    private int height;
-    private Palette palette;
-    PaletteImage(BufferedImage image, Palette palette, boolean dither) {
+    private final int[][] imageArray;
+    private final int width;
+    private final int height;
+    private final Palette palette;
+
+    PaletteImage(BufferedImage image, Palette palette, IDither dither) {
         this.palette = palette;
         this.width = image.getWidth();
         this.height = image.getHeight();
-        int[] pixelArray = new int[width*height];
+        int[] pixelArray = new int[width * height];
         int[][][] rgbPixelArray = new int[width][height][3];
         this.imageArray = new int[width][height];
         image.getRGB(0, 0, width, height, pixelArray, 0, width);
@@ -18,27 +19,9 @@ public class PaletteImage {
                 rgbPixelArray[x][y] = Colors.splitColor(pixelArray[x + y * width]);
             }
         }
-        pixelArray = null; // dereference to save some memory
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                imageArray[x][y] = palette.getClosestPaletteIndex(rgbPixelArray[x][y]);
-                if (dither) {
-                    int[] quantErr = Colors.addArrays(rgbPixelArray[x][y],
-                            Colors.splitColor(palette.getColor(imageArray[x][y])), -1);
-                    if (x < width - 1)
-                        rgbPixelArray[x+1][y] = Colors.addArrays(rgbPixelArray[x+1][y],
-                                Colors.scaleArray(quantErr, 7.0f/16));
-                    if (y < height - 1) {
-                        rgbPixelArray[x][y+1] = Colors.addArrays(rgbPixelArray[x][y+1],
-                                Colors.scaleArray(quantErr, 5.0f/16));
-                        if (x > 1)
-                            rgbPixelArray[x-1][y+1] = Colors.addArrays(rgbPixelArray[x-1][y+1],
-                                    Colors.scaleArray(quantErr, 3.0f/16));
-                        if (x < width - 1)
-                            rgbPixelArray[x+1][y+1] = Colors.addArrays(rgbPixelArray[x+1][y+1],
-                                    Colors.scaleArray(quantErr, 1.0f/16));
-                    }
-                }
+                imageArray[x][y] = dither.applyDither(x, y, rgbPixelArray, palette);
             }
         }
     }

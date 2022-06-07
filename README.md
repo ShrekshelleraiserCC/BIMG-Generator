@@ -15,16 +15,17 @@ Compiled on Java 17 using
 and [Apache Commons IO](https://commons.apache.org/proper/commons-io/) 2.11.
 
 ```
-usage: BIMG input output [-auto] [-d] [-hd] [-p <arg>] [-post <arg>] [-spf
-<arg>] [--uncapresolution]
+usage: BIMG <input> <output> [-auto] [-bbf] [-d] [-hd] [-ordered <arg>]
+       [-p <arg>] [-post <arg>] [-spf <arg>] [--uncapresolution]
 Convert an image into an bimg file.
 
--auto                  Automatically generate palette
--d,--dither            Do dithering
--hd                    High density
--p,--palette <arg>     Comma separated list of palette colors
--post <arg>            Output processed image to path
--spf <arg>             Seconds per frame
---uncapresolution   Uncap the resolution
--bbf                   Save output in bbf format
+ -auto                  Automatically generate palette
+ -bbf                   Save output in bbf format
+ -d,--dither            Do Floyd-Steinberg dithering
+ -hd                    High density
+ -ordered <arg>         Do ordered dithering
+ -p,--palette <arg>     Comma separated list of palette colors
+ -post <arg>            Output processed image to path
+ -spf <arg>             Seconds per frame
+    --uncapresolution   Uncap the resolution
 ```

@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class ImageMaker {
-    static final int VERSION = 3;
+    static final int VERSION = 4;
     public static final Palette defaultPalette = new Palette(new int[]{0xf0f0f0, 0xf2b233, 0xe57fd8, 0x99b2f2, 0xdede6c,
             0x7fcc19, 0xf2b2cc, 0x4c4c4c, 0x999999, 0x4c99b2, 0xb266e5, 0x3366cc, 0x7f664c, 0x57a64e, 0xcc4c4c, 0x111111});
     static Palette palette = defaultPalette;
@@ -82,6 +82,11 @@ public class ImageMaker {
                 .desc("Save output in bbf format")
                 .hasArg(false)
                 .build();
+        Option option_nfp = Option.builder("nfp")
+                .required(false)
+                .desc("Save output in bbf format")
+                .hasArg(false)
+                .build();
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
 
@@ -94,6 +99,7 @@ public class ImageMaker {
         options.addOption(option_secondsPerFrame);
         options.addOption(option_uncapResolution);
         options.addOption(option_bbf);
+        options.addOption(option_nfp);
 
         System.out.println("BIMG Image Generator version " + VERSION);
 
@@ -115,6 +121,7 @@ public class ImageMaker {
                 } catch (NumberFormatException e) {
                     System.out.println("Please provide the threshold map size and color spread. Example usage: ");
                     System.out.println("-ordered 4,50");
+                    return;
                 }
             }
 
@@ -151,6 +158,8 @@ public class ImageMaker {
 
             if (commandLine.hasOption(option_bbf))
                 filetype = IM_FILETYPE.BBF;
+            else if (commandLine.hasOption(option_nfp))
+                filetype = IM_FILETYPE.NFP;
 
         } catch (org.apache.commons.cli.ParseException exception) {
             showHelp = true;
@@ -214,18 +223,28 @@ public class ImageMaker {
                     }
                 }
                 long startTime = System.nanoTime();
-                if (filetype == IM_FILETYPE.BIMG) {
-                    BIMG bimg = new BIMG(im);
-                    if (imageArr.length > 1)
-                        bimg.writeKeyValuePair("secondsPerFrame", secondsPerFrame);
-                    bimg.save(args[1]);
-                    long endTime = System.nanoTime();
-                    System.out.println("Wrote bimg in " + (endTime - startTime) / 1000000.0f + "ms.");
-                } else if (filetype == IM_FILETYPE.BBF) {
-                    BBF bbf = new BBF(im);
-                    bbf.save(args[1]);
-                    long endTime = System.nanoTime();
-                    System.out.println("Wrote bbf in " + (endTime - startTime) / 1000000.0f + "ms.");
+                long endTime;
+                switch (filetype) {
+                    case BIMG -> {
+                        BIMG bimg = new BIMG(im);
+                        if (imageArr.length > 1)
+                            bimg.writeKeyValuePair("secondsPerFrame", secondsPerFrame);
+                        bimg.save(args[1]);
+                        endTime = System.nanoTime();
+                        System.out.println("Wrote bimg in " + (endTime - startTime) / 1000000.0f + "ms.");
+                    }
+                    case BBF -> {
+                        BBF bbf = new BBF(im);
+                        bbf.save(args[1]);
+                        endTime = System.nanoTime();
+                        System.out.println("Wrote bbf in " + (endTime - startTime) / 1000000.0f + "ms.");
+                    }
+                    case NFP -> {
+                        NFP nfp = new NFP(im);
+                        nfp.save(args[1]);
+                        endTime = System.nanoTime();
+                        System.out.println("Wrote nfp in " + (endTime - startTime) / 1000000.0f + "ms.");
+                    }
                 }
 
             } catch (IOException e) {
@@ -245,7 +264,8 @@ public class ImageMaker {
 
     enum IM_FILETYPE {
         BIMG,
-        BBF
+        BBF,
+        NFP
     }
 
     static void writeToFile(String filename, int[] data) throws IOException {

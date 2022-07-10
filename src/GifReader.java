@@ -1,13 +1,21 @@
-import org.w3c.dom.*;
-import javax.imageio.*;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
-import java.awt.image.*;
-import java.io.*;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GifReader {
-    public static BufferedImage[] openGif(File file) {
+    public static BufferedImage[] openGif(File file, boolean wipeFrames) {
         BufferedImage[] frames = new BufferedImage[0];
         int length = 0;
         int framesProcessed = 0;
@@ -27,6 +35,8 @@ public class GifReader {
             noi = reader.getNumImages(true);
             BufferedImage master = null;
             frames = new BufferedImage[noi];
+            int baseWidth = 1;
+            int baseHeight = 1;
             for (framesProcessed = 0; framesProcessed < noi; framesProcessed++) {
                 BufferedImage image = reader.read(framesProcessed);
                 IIOMetadata metadata = reader.getImageMetadata(framesProcessed);
@@ -46,14 +56,19 @@ public class GifReader {
                             imageAttr.put(s, Integer.valueOf(attnode.getNodeValue()));
                         }
                         if (framesProcessed == 0) {
-                            master = new BufferedImage(imageAttr.get("imageWidth"), imageAttr.get("imageHeight"),
+                            baseHeight = imageAttr.get("imageHeight");
+                            baseWidth = imageAttr.get("imageWidth");
+                            master = new BufferedImage(baseWidth, baseHeight,
+                                    BufferedImage.TYPE_INT_ARGB);
+                        } else if (wipeFrames) {
+                            master = new BufferedImage(baseWidth, baseHeight,
                                     BufferedImage.TYPE_INT_ARGB);
                         }
                         master.getGraphics().drawImage(image, imageAttr.get("imageLeftPosition"),
                                 imageAttr.get("imageTopPosition"), null);
-
                     }
                 }
+                assert master != null;
                 frames[framesProcessed] = copyImage(master);
                 length = framesProcessed;
             }

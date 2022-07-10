@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class ImageMaker {
-    static final int VERSION = 4;
+    static final int VERSION = 5;
     public static final Palette defaultPalette = new Palette(new int[]{0xf0f0f0, 0xf2b233, 0xe57fd8, 0x99b2f2, 0xdede6c,
             0x7fcc19, 0xf2b2cc, 0x4c4c4c, 0x999999, 0x4c99b2, 0xb266e5, 0x3366cc, 0x7f664c, 0x57a64e, 0xcc4c4c, 0x111111});
     static Palette palette = defaultPalette;
@@ -28,6 +28,7 @@ public class ImageMaker {
         boolean savePostImage = false;
         double secondsPerFrame = 0.2;
         boolean uncapResolution = false;
+        boolean wipeFrames = false;
         IDither dither = new DitherNone();
         IM_FILETYPE filetype = IM_FILETYPE.BIMG;
         String postImagePath = "";
@@ -87,6 +88,12 @@ public class ImageMaker {
                 .desc("Save output in bbf format")
                 .hasArg(false)
                 .build();
+        Option option_wipeFrames = Option.builder()
+                .required(false)
+                .desc("Empty each frame of gifs")
+                .longOpt("wipeframes")
+                .hasArg(false)
+                .build();
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
 
@@ -100,6 +107,7 @@ public class ImageMaker {
         options.addOption(option_uncapResolution);
         options.addOption(option_bbf);
         options.addOption(option_nfp);
+        options.addOption(option_wipeFrames);
 
         System.out.println("BIMG Image Generator version " + VERSION);
 
@@ -161,6 +169,9 @@ public class ImageMaker {
             else if (commandLine.hasOption(option_nfp))
                 filetype = IM_FILETYPE.NFP;
 
+            if (commandLine.hasOption(option_wipeFrames))
+                wipeFrames = true;
+
         } catch (org.apache.commons.cli.ParseException exception) {
             showHelp = true;
         }
@@ -171,7 +182,7 @@ public class ImageMaker {
                 BufferedImage[] imageArr;
                 if (Objects.equals(FilenameUtils.getExtension(args[0]), "gif")) {
                     // terrible check for a gif file
-                    imageArr = GifReader.openGif(new File(args[0]));
+                    imageArr = GifReader.openGif(new File(args[0]), wipeFrames);
                 } else {
                     imageArr = new BufferedImage[]{ImageIO.read(new File(args[0]))};
                 }

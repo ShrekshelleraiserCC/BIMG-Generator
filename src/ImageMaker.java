@@ -85,7 +85,7 @@ public class ImageMaker {
                 .build();
         Option option_nfp = Option.builder("nfp")
                 .required(false)
-                .desc("Save output in bbf format")
+                .desc("Save output in nfp format")
                 .hasArg(false)
                 .build();
         Option option_wipeFrames = Option.builder()

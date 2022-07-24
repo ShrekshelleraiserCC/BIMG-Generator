@@ -27,6 +27,8 @@ public class BBF {
                         fileDataStringBuilder.append(",");
                 }
                 fileDataStringBuilder.append("}");
+                if (frame.getPalette().equals(frames[frames.length - 1].getPalette()))
+                    break; // palette is the same as the last palette
                 if (frame != frames[frames.length - 1])
                     fileDataStringBuilder.append(",");
             }

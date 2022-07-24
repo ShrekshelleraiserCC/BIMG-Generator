@@ -29,6 +29,7 @@ public class ImageMaker {
         double secondsPerFrame = 0.2;
         boolean uncapResolution = false;
         boolean wipeFrames = false;
+        boolean autoSingle = false;
         IDither dither = new DitherNone();
         IM_FILETYPE filetype = IM_FILETYPE.BIMG;
         String postImagePath = "";
@@ -94,6 +95,12 @@ public class ImageMaker {
                 .longOpt("wipeframes")
                 .hasArg(false)
                 .build();
+        Option option_autoSingle = Option.builder()
+                .required(false)
+                .desc("Automatically generate a palette for the first frame, and use the same for all others")
+                .longOpt("autosingle")
+                .hasArg(false)
+                .build();
         Options options = new Options();
         CommandLineParser parser = new DefaultParser();
 
@@ -108,6 +115,7 @@ public class ImageMaker {
         options.addOption(option_bbf);
         options.addOption(option_nfp);
         options.addOption(option_wipeFrames);
+        options.addOption(option_autoSingle);
 
         System.out.println("BIMG Image Generator version " + VERSION);
 
@@ -139,7 +147,7 @@ public class ImageMaker {
                 mode = IM_MODE.HD;
             }
 
-            if (commandLine.hasOption("auto")) {
+            if (commandLine.hasOption("auto") || commandLine.hasOption(option_autoSingle)) {
                 mode = switch (mode) {
                     case HD -> IM_MODE.HD_AUTO;
                     case LD -> IM_MODE.LD_AUTO;
@@ -172,6 +180,10 @@ public class ImageMaker {
             if (commandLine.hasOption(option_wipeFrames))
                 wipeFrames = true;
 
+
+            if (commandLine.hasOption(option_autoSingle))
+                autoSingle = true;
+
         } catch (org.apache.commons.cli.ParseException exception) {
             showHelp = true;
         }
@@ -187,6 +199,7 @@ public class ImageMaker {
                     imageArr = new BufferedImage[]{ImageIO.read(new File(args[0]))};
                 }
                 IMode[] im = new IMode[imageArr.length];
+                Palette singlePalette = null;
                 for (int i = 0; i < imageArr.length; i++) {
                     BufferedImage inputImage = imageArr[i];
                     if (!uncapResolution) {
@@ -212,14 +225,24 @@ public class ImageMaker {
                                 + inputImage.getHeight());
                     }
                     long startTime = System.nanoTime();
-                    im[i] = switch (mode) {
-                        case HD -> new ModeHighDensity(inputImage, palette, dither);
-                        case LD -> new ModeLowDensity(inputImage, palette, dither);
-                        case HD_AUTO -> new ModeHighDensity(inputImage, dither);
-                        case LD_AUTO -> new ModeLowDensity(inputImage, dither);
-                    };
+                    if (!autoSingle || i == 0) {
+                        im[i] = switch (mode) {
+                            case HD -> new ModeHighDensity(inputImage, palette, dither);
+                            case LD -> new ModeLowDensity(inputImage, palette, dither);
+                            case HD_AUTO -> new ModeHighDensity(inputImage, dither);
+                            case LD_AUTO -> new ModeLowDensity(inputImage, dither);
+                        };
+                    } else {
+                        im[i] = switch (mode) {
+                            case HD, HD_AUTO -> new ModeHighDensity(inputImage, singlePalette, dither);
+                            case LD, LD_AUTO -> new ModeLowDensity(inputImage, singlePalette, dither);
+                        };
+                    }
+                    if (i == 0 && autoSingle) {
+                        singlePalette = im[0].getPalette();
+                    }
                     long endTime = System.nanoTime();
-                    System.out.println("Quantized image in " + (endTime - startTime)/1000000.0f + "ms.");
+                    System.out.println("Quantized image in " + (endTime - startTime) / 1000000.0f + "ms.");
                     if (savePostImage) {
                         startTime = System.nanoTime();
                         if (imageArr.length > 1) {

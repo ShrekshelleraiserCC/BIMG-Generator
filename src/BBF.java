@@ -21,7 +21,7 @@ public class BBF {
                 fileDataStringBuilder.append("{");
                 Palette palette = frames[0].getPalette();
                 for (int i = 0; i < 16; i++) {
-                    fileDataStringBuilder.append("\"").append((int) Math.pow(2, i)).append("\":")
+                    fileDataStringBuilder.append("\"").append(i).append("\":")
                             .append(palette.getColor(i));
                     if (i != 15)
                         fileDataStringBuilder.append(",");

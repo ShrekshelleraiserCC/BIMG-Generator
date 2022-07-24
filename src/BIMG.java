@@ -70,7 +70,7 @@ public class BIMG {
         if (!finalized) {
             file.append("palette={");
             for (int colorIndex = 0; colorIndex < colors.getLength(); colorIndex++) {
-                file.append("[").append((int)Math.pow(2, colorIndex)).append("]={");
+                file.append("[").append(colorIndex).append("]={");
                 file.append(colors.getColor(colorIndex)).append("},");
             }
             file.append("},");

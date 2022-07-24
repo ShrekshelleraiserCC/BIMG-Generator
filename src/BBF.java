@@ -16,15 +16,21 @@ public class BBF {
         if (frames[0].getPalette().equals(ImageMaker.defaultPalette))
             fileDataStringBuilder.append("{}").append("\n"); // this is supposed to be a "meta" parameter
         else {
-            fileDataStringBuilder.append("{\"palette\":{"); // Open meta
-            Palette palette = frames[0].getPalette();
-            for (int i = 0; i < 16; i++) {
-                fileDataStringBuilder.append("\"").append((int) Math.pow(2, i)).append("\":\"")
-                        .append(palette.getColor(i)).append("\"");
-                if (i != 15)
+            fileDataStringBuilder.append("{\"palette\":["); // Open meta
+            for (IMode frame : frames) {
+                fileDataStringBuilder.append("{");
+                Palette palette = frames[0].getPalette();
+                for (int i = 0; i < 16; i++) {
+                    fileDataStringBuilder.append("\"").append((int) Math.pow(2, i)).append("\":")
+                            .append(palette.getColor(i));
+                    if (i != 15)
+                        fileDataStringBuilder.append(",");
+                }
+                fileDataStringBuilder.append("}");
+                if (frame != frames[frames.length - 1])
                     fileDataStringBuilder.append(",");
             }
-            fileDataStringBuilder.append("}}\n");
+            fileDataStringBuilder.append("]}\n");
         }
         for (IMode frame : frames) {
             String[][] frameString = frame.get();

@@ -19,7 +19,7 @@ public class BBF {
             fileDataStringBuilder.append("{\"palette\":["); // Open meta
             for (IMode frame : frames) {
                 fileDataStringBuilder.append("{");
-                Palette palette = frames[0].getPalette();
+                Palette palette = frame.getPalette();
                 for (int i = 0; i < 16; i++) {
                     fileDataStringBuilder.append("\"").append(i).append("\":")
                             .append(palette.getColor(i));
@@ -28,7 +28,7 @@ public class BBF {
                 }
                 fileDataStringBuilder.append("}");
                 if (frame.getPalette().equals(frames[frames.length - 1].getPalette()))
-                    break; // palette is the same as the last palette
+                    break; // palette is the same as the last palette, should test for a single palette used for each frame
                 if (frame != frames[frames.length - 1])
                     fileDataStringBuilder.append(",");
             }

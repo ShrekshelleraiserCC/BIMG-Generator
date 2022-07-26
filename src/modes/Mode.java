@@ -1,3 +1,5 @@
+package modes;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -8,7 +10,7 @@ public class Mode {
     public static BufferedImage scaleImage(BufferedImage before, double scaleX, double scaleY) {
         int w = before.getWidth();
         int h = before.getHeight();
-        BufferedImage after = new BufferedImage((int) (w*scaleX), (int) (h*scaleY), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage after = new BufferedImage((int) (w * scaleX), (int) (h * scaleY), BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = new AffineTransform();
         at.scale(scaleX, scaleY);
         AffineTransformOp scaleOp =
@@ -19,9 +21,14 @@ public class Mode {
     }
 
     public static void mergeAtIndex(int[] main, int[] secondary, int index) {
-        for (int i = 0; i < secondary.length; i++) {
-            main[index + i] = secondary[i];
-        }
+        System.arraycopy(secondary, 0, main, index, secondary.length);
+    }
+
+    public enum IM_MODE {
+        HD,
+        LD,
+        HD_AUTO,
+        LD_AUTO
     }
 
     public static int[] mergeAtIndexC(int[] main, int[] secondary, int index) {

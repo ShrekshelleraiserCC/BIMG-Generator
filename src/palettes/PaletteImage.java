@@ -1,3 +1,7 @@
+package palettes;
+
+import dithers.IDither;
+
 import java.awt.image.BufferedImage;
 
 public class PaletteImage {
@@ -6,7 +10,7 @@ public class PaletteImage {
     private final int height;
     private final Palette palette;
 
-    PaletteImage(BufferedImage image, Palette palette, IDither dither) {
+    public PaletteImage(BufferedImage image, Palette palette, IDither dither) {
         this.palette = palette;
         this.width = image.getWidth();
         this.height = image.getHeight();

@@ -1,5 +1,8 @@
+package modes;
+
+import palettes.Colors;
+
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class KMeans {
     public static int[] applyKMeans(BufferedImage image, int K) {
@@ -51,46 +54,47 @@ public class KMeans {
             }
             for (int i = 0; i < K; i++) {
                 averageCentroidLocation[i] = Colors.scaleArray(averageCentroidLocation[i],
-                        1.0f/centroidCount[i]);
+                        1.0f / centroidCount[i]);
                 centroidsStayedPut = centroidsStayedPut && centroidPoints[i].setLocation(averageCentroidLocation[i]);
             }
             iterations++;
         }
-        final boolean saveCSV = false;
-        if (saveCSV) {
-            StringBuilder csvData = new StringBuilder();
-            for (Record record : recordPoints) {
-                csvData.append(record.location[0]).append(",").append(record.location[1])
-                        .append(",").append(record.location[2]).append("\n");
-            }
-            try {
-                ImageMaker.writeToFile("data.csv", ImageMaker.stringToInt(csvData.toString()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            csvData = new StringBuilder();
-            for (Centroid centroid : centroidPoints) {
-                csvData.append(centroid.location[0]).append(",").append(centroid.location[1])
-                        .append(",").append(centroid.location[2]).append("\n");
-            }
-            try {
-                ImageMaker.writeToFile("centroid.csv", ImageMaker.stringToInt(csvData.toString()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+//        final boolean saveCSV = false;
+//        if (saveCSV) {
+//            StringBuilder csvData = new StringBuilder();
+//            for (Record record : recordPoints) {
+//                csvData.append(record.location[0]).append(",").append(record.location[1])
+//                        .append(",").append(record.location[2]).append("\n");
+//            }
+//            try {
+//                Utils.writeToFile("data.csv", Utils.stringToInt(csvData.toString()));
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//            csvData = new StringBuilder();
+//            for (Centroid centroid : centroidPoints) {
+//                csvData.append(centroid.location[0]).append(",").append(centroid.location[1])
+//                        .append(",").append(centroid.location[2]).append("\n");
+//            }
+//            try {
+//                Utils.writeToFile("centroid.csv", Utils.stringToInt(csvData.toString()));
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
         int[] returnValue = new int[K];
         for (int i = 0; i < K; i++) {
             returnValue[i] = Colors.combineColors(centroidPoints[i].location);
         }
-        System.out.println("Found optimal colors in "+iterations+" iterations.");
+        System.out.println("Found optimal colors in " + iterations + " iterations.");
         return returnValue;
     }
 }
 
 class Centroid {
     public int[] location;
+
     Centroid(int[] location) {
         this.location = location;
     }
@@ -108,6 +112,7 @@ class Record {
     public int[] location; // location in RGB space
     private int closestCentroid = 0;
     private final Centroid[] centroids;
+
     Record(int color, Centroid[] centroids) {
         this.centroids = centroids;
         location = Colors.splitColor(color);

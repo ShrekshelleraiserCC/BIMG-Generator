@@ -1,3 +1,8 @@
+package dithers;
+
+import palettes.Colors;
+import palettes.Palette;
+
 public class DitherFloydSteinberg implements IDither {
 
     @Override

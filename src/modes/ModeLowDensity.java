@@ -1,3 +1,9 @@
+package modes;
+
+import dithers.IDither;
+import palettes.Palette;
+import palettes.PaletteImage;
+
 import java.awt.image.BufferedImage;
 
 public class ModeLowDensity implements IMode {
@@ -5,14 +11,15 @@ public class ModeLowDensity implements IMode {
     private final int width;
     private final int height;
     private final PaletteImage image;
-    ModeLowDensity(BufferedImage image, Palette palette, IDither dither) {
+
+    public ModeLowDensity(BufferedImage image, Palette palette, IDither dither) {
         this.palette = palette;
         this.image = new PaletteImage(image, this.palette, dither);
         this.width = this.image.getWidth();
         this.height = this.image.getHeight();
     }
 
-    ModeLowDensity(BufferedImage image, IDither dither) {
+    public ModeLowDensity(BufferedImage image, IDither dither) {
         this(image, new Palette(KMeans.applyKMeans(image, 16)), dither);
     }
 

@@ -1,3 +1,7 @@
+package dithers;
+
+import palettes.Palette;
+
 public class DitherNone implements IDither {
     @Override
     public int applyDither(int x, int y, int[][][] rgbPixelArray, Palette palette) {

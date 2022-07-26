@@ -1,9 +1,14 @@
+package dithers;
+
+import palettes.Colors;
+import palettes.Palette;
+
 public class DitherOrdered implements IDither {
 
     private final double colorSpread;
     private final double[][] thresholdMap;
 
-    DitherOrdered(int thresholdMapSize, double colorSpread) {
+    public DitherOrdered(int thresholdMapSize, double colorSpread) {
         thresholdMap = switch (thresholdMapSize) {
             case 2 -> new double[][]{{0, 2}, {3, 1}};
             case 4 -> new double[][]{{0, 8, 2, 10},

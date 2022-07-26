@@ -1,12 +1,11 @@
-import java.awt.image.BufferedImage;
-import java.util.Objects;
+package palettes;
 
-import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 
 public class Palette {
     private int[] colors;
-    Palette(int[] colors) {
+
+    public Palette(int[] colors) {
         this.colors = colors;
     }
 

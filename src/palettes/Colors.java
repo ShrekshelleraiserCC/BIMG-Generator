@@ -1,3 +1,5 @@
+package palettes;
+
 import static java.lang.Math.sqrt;
 
 public class Colors {
@@ -28,6 +30,7 @@ public class Colors {
     public static int[] addArrays(int[] array1, int[] array2) {
         return addArrays(array1, array2, 1);
     }
+
     public static int[] addArrays(int[] array1, int[] array2, int mul2) {
         if (array1.length != array2.length) {
             throw new RuntimeException("Arrays are of different lengths!");

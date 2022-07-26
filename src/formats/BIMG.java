@@ -1,14 +1,22 @@
+package formats;
+
+import modes.IMode;
+import palettes.DefaultPalette;
+import palettes.Palette;
+import utils.Utils;
+
+import java.io.File;
 import java.io.IOException;
 
-public class BIMG {
+public class BIMG implements IFormat {
     private final IMode[] frames;
     private boolean metadataWritten = false;
     private boolean finalized = false;
     StringBuilder file = new StringBuilder();
 
-    BIMG(IMode[] frames) {
+    public BIMG(IMode[] frames) {
         this.frames = frames;
-        file.append("{"); // Open root BIMG table
+        file.append("{"); // Open root formats.BIMG table
         for (int frameIndex = 0; frameIndex < this.frames.length; frameIndex++) {
             IMode frame = this.frames[frameIndex];
             file.append("{"); // Open frame
@@ -24,7 +32,7 @@ public class BIMG {
             }
             file.append("},"); // End frame
         }
-        if (!frames[0].getPalette().equals(ImageMaker.defaultPalette)) {
+        if (!frames[0].getPalette().equals(DefaultPalette.defaultPalette)) {
             // First frame uses a non-default palette
             writePalette(frames[0].getPalette());
         }
@@ -33,10 +41,19 @@ public class BIMG {
     public void save(String filename) throws IOException {
         writeMetadata();
         if (!finalized) {
-            file.append("}"); // Close root BIMG table
+            file.append("}"); // Close root formats.BIMG table
             finalized = true;
         }
-        ImageMaker.writeToFile(filename, ImageMaker.stringToInt(file.toString()));
+        Utils.writeToFile(filename, Utils.stringToInt(file.toString()));
+    }
+
+    public void save(File file) throws IOException {
+        writeMetadata();
+        if (!finalized) {
+            this.file.append("}"); // Close root formats.BIMG table
+            finalized = true;
+        }
+        Utils.writeToFile(file, Utils.stringToInt(this.file.toString()));
     }
 
     private void appendString(String str) {
@@ -81,7 +98,7 @@ public class BIMG {
         if (!metadataWritten && !finalized) {
             final String version = "1.0.0";
             writeKeyValuePair("version", version);
-            writeKeyValuePair("creator", "Java BIMG Generator");
+            writeKeyValuePair("creator", "Java formats.BIMG Generator");
             if (frames.length > 1)
                 writeKeyValuePair("animation", true);
             metadataWritten = true;

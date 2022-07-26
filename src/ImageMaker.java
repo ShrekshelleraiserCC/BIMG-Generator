@@ -1,329 +1,285 @@
-import org.apache.commons.cli.*;
+import dithers.DitherFloydSteinberg;
+import dithers.DitherNone;
+import dithers.DitherOrdered;
+import dithers.IDither;
+import formats.BBF;
+import formats.BIMG;
+import formats.NFP;
+import image.Image;
+import modes.IMode;
+import modes.Mode;
 import org.apache.commons.io.FilenameUtils;
+import utils.Utils;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
-public class ImageMaker {
-    static final int VERSION = 8;
-    public static final Palette defaultPalette = new Palette(new int[]{0xf0f0f0, 0xf2b233, 0xe57fd8, 0x99b2f2, 0xdede6c,
-            0x7fcc19, 0xf2b2cc, 0x4c4c4c, 0x999999, 0x4c99b2, 0xb266e5, 0x3366cc, 0x7f664c, 0x57a64e, 0xcc4c4c, 0x111111});
-    static Palette palette = defaultPalette;
+import static palettes.DefaultPalette.defaultPalette;
 
-    enum IM_MODE {
-        HD,
-        LD,
-        HD_AUTO,
-        LD_AUTO
+public class ImageMaker implements ActionListener {
+    private final JFileChooser fc;
+    JFrame frame;
+    private Image image = null;
+    private JComboBox<String> resolutionMode;
+    private JComboBox<String> paletteMode;
+    private JComboBox<String> ditherMode;
+    private JCheckBox wipeFrames;
+    private JLabel outputImage;
+    private JTextField monitorHorizontal;
+    private JTextField monitorVertical;
+    private Checkbox fitToMonitor;
+    private JSpinner visualScale;
+    private JLabel thresholdMapLabel;
+    private JComboBox<Integer> thresholdMap;
+    private JLabel colorSpreadLabel;
+    private JSpinner colorSpread;
+    private JComboBox<String> fileType;
+    private IMode[] im = null;
+
+    public ImageMaker() {
+        fc = new JFileChooser();
     }
-    static IM_MODE mode = IM_MODE.LD;
 
-    // default CC palette
     public static void main(String[] args) {
-        boolean showHelp = false;
-        boolean savePostImage = false;
-        double secondsPerFrame = 0.2;
-        boolean uncapResolution = false;
-        boolean wipeFrames = false;
-        boolean autoSingle = false;
-        IDither dither = new DitherNone();
-        IM_FILETYPE filetype = IM_FILETYPE.BIMG;
-        String postImagePath = "";
-        CommandLine commandLine;
-        Option option_postImageFile = Option.builder("post")
-                .required(false)
-                .desc("Output processed image to path")
-                .hasArg(true)
-                .build();
-        Option option_doDither = Option.builder("d")
-                .required(false)
-                .desc("Do Floyd-Steinberg dithering")
-                .longOpt("dither")
-                .hasArg(false)
-                .build();
-        Option option_doOrderedDither = Option.builder("ordered")
-                .required(false)
-                .desc("Do ordered dithering")
-                .valueSeparator(',')
-                .hasArgs()
-                .build();
-        Option option_highDensity = Option.builder("hd")
-                .required(false)
-                .desc("High density")
-                .hasArg(false)
-                .build();
-        Option option_customPalette = Option.builder("p")
-                .required(false)
-                .desc("Comma separated list of palette colors")
-                .longOpt("palette")
-                .hasArgs()
-                .valueSeparator(',')
-                .build();
-        Option option_autoPalette = Option.builder("auto")
-                .required(false)
-                .desc("Automatically generate palette")
-                .hasArg(false)
-                .build();
-        Option option_secondsPerFrame = Option.builder("spf")
-                .required(false)
-                .desc("Seconds per frame")
-                .hasArg(true)
-                .build();
-        Option option_uncapResolution = Option.builder()
-                .required(false)
-                .desc("Uncap the resolution")
-                .longOpt("uncapresolution")
-                .hasArg(false)
-                .build();
-        Option option_bbf = Option.builder("bbf")
-                .required(false)
-                .desc("Save output in bbf format")
-                .hasArg(false)
-                .build();
-        Option option_nfp = Option.builder("nfp")
-                .required(false)
-                .desc("Save output in nfp format")
-                .hasArg(false)
-                .build();
-        Option option_wipeFrames = Option.builder()
-                .required(false)
-                .desc("Empty each frame of gifs")
-                .longOpt("wipeframes")
-                .hasArg(false)
-                .build();
-        Option option_autoSingle = Option.builder()
-                .required(false)
-                .desc("Automatically generate a palette for the first frame, and use the same for all others")
-                .longOpt("autosingle")
-                .hasArg(false)
-                .build();
-        Options options = new Options();
-        CommandLineParser parser = new DefaultParser();
+        ImageMaker main = new ImageMaker();
+        main.startGUI();
+    }
 
-        options.addOption(option_postImageFile);
-        options.addOption(option_doDither);
-        options.addOption(option_doOrderedDither);
-        options.addOption(option_highDensity);
-        options.addOption(option_customPalette);
-        options.addOption(option_autoPalette);
-        options.addOption(option_secondsPerFrame);
-        options.addOption(option_uncapResolution);
-        options.addOption(option_bbf);
-        options.addOption(option_nfp);
-        options.addOption(option_wipeFrames);
-        options.addOption(option_autoSingle);
+    public void startGUI() {
+        frame = new JFrame("BIMG Converter Version 9.0");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        System.out.println("BIMG Image Generator version " + VERSION);
+        JPanel topPanel = new JPanel();
 
-        try {
-            commandLine = parser.parse(options, args);
+        Button openButton = new Button("Open");
+        openButton.addActionListener(this);
+        topPanel.add(openButton);
 
-            if (commandLine.hasOption("post")) {
-                savePostImage = true;
-                postImagePath = commandLine.getOptionValue("post");
-            }
+        resolutionMode = new JComboBox<>(Utils.getNames(resolutionModes.class));
+        topPanel.add(resolutionMode);
 
-            if (commandLine.hasOption("d"))
-                dither = new DitherFloydSteinberg();
-            else if (commandLine.hasOption("ordered")) {
+        paletteMode = new JComboBox<>(Utils.getNames(paletteModes.class));
+        topPanel.add(paletteMode);
+
+        ditherMode = new JComboBox<>(Utils.getNames(ditherModes.class));
+        ditherMode.addActionListener(this);
+        topPanel.add(ditherMode);
+        thresholdMapLabel = new JLabel("Threshold Map");
+        topPanel.add(thresholdMapLabel);
+        thresholdMap = new JComboBox<>(new Integer[]{2, 4, 8});
+        topPanel.add(thresholdMap);
+        colorSpreadLabel = new JLabel("Color Spread");
+        topPanel.add(colorSpreadLabel);
+        colorSpread = new JSpinner(new SpinnerNumberModel(50, 5, 200.0, 5));
+        topPanel.add(colorSpread);
+
+        thresholdMapLabel.setVisible(false);
+        thresholdMap.setVisible(false);
+        colorSpreadLabel.setVisible(false);
+        colorSpread.setVisible(false);
+
+        wipeFrames = new JCheckBox("Wipe Frames");
+        topPanel.add(wipeFrames);
+
+        Button refreshButton = new Button("Refresh");
+        refreshButton.addActionListener(this);
+        topPanel.add(refreshButton);
+
+        frame.getContentPane().add(topPanel, BorderLayout.NORTH);
+
+        JPanel centerPanel = new JPanel();
+        outputImage = new JLabel();
+        centerPanel.add(outputImage);
+
+        frame.getContentPane().add(centerPanel, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.add(new JLabel("Chars X"));
+        monitorHorizontal = new JTextField("51", 3);
+        bottomPanel.add(monitorHorizontal);
+        bottomPanel.add(new JLabel("Chars Y"));
+        monitorVertical = new JTextField("19", 3);
+        bottomPanel.add(monitorVertical);
+
+        fitToMonitor = new Checkbox("Fit to Size", true);
+        bottomPanel.add(fitToMonitor);
+
+        bottomPanel.add(new JLabel("Preview scale"));
+        visualScale = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+        bottomPanel.add(visualScale);
+
+        fileType = new JComboBox<>(new String[]{"BIMG", "BBF", "NFP"});
+        bottomPanel.add(fileType);
+        Button saveButton = new Button("Save");
+        saveButton.addActionListener(this);
+        bottomPanel.add(saveButton);
+
+        Button savePreviewButton = new Button("Save Preview");
+        savePreviewButton.addActionListener(this);
+        bottomPanel.add(savePreviewButton);
+
+        frame.getContentPane().add(bottomPanel, BorderLayout.SOUTH);
+
+        frame.setMinimumSize(new Dimension(800, 500));
+        frame.setVisible(true);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String event = e.getActionCommand();
+        System.out.println("Action performed " + event);
+        if (Objects.equals(event, "Open")) {
+            int returnVal = fc.showOpenDialog(frame);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                // user selected a file
+                File file = fc.getSelectedFile();
                 try {
-                    int thresholdMapSize = Integer.decode(commandLine.getOptionValues("ordered")[0]);
-                    double colorSpread = Double.parseDouble(commandLine.getOptionValues("ordered")[1]);
-                    dither = new DitherOrdered(thresholdMapSize, colorSpread);
-                } catch (NumberFormatException e) {
-                    System.out.println("Please provide the threshold map size and color spread. Example usage: ");
-                    System.out.println("-ordered 4,50");
-                    return;
+                    image = new Image(file, wipeFrames.isSelected());
+                    refresh();
+                } catch (IOException ex) {
+                    System.out.println("Can't open file " + file.getName() + ": " + ex);
                 }
             }
-
-            uncapResolution = (commandLine.hasOption(option_uncapResolution));
-
-            if (commandLine.hasOption("hd")) {
-                mode = IM_MODE.HD;
-            }
-
-            if (commandLine.hasOption("auto") || commandLine.hasOption(option_autoSingle)) {
-                mode = switch (mode) {
-                    case HD -> IM_MODE.HD_AUTO;
-                    case LD -> IM_MODE.LD_AUTO;
-                    case HD_AUTO, LD_AUTO -> null; // should be impossible to reach
-                };
-            } else if (commandLine.hasOption("p")) {
+        } else if (Objects.equals(event, "Refresh")) {
+            refresh();
+        } else if (Objects.equals(event, "Save")) {
+            int returnVal = fc.showSaveDialog(frame);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                // user selected a file
+                File file = fc.getSelectedFile();
+                String filetype = (String) fileType.getSelectedItem();
+                float startTime = System.nanoTime();
+                float endTime;
                 try {
-                    String[] paletteColors = commandLine.getOptionValues("p");
-                    int[] paletteColorsInt = new int[paletteColors.length];
-                    for (int index = 0; index < paletteColors.length; index++) {
-                        paletteColorsInt[index] = Integer.decode(paletteColors[index]);
+                    if (im == null)
+                        im = getImages();
+                    switch (filetype) {
+                        case "BIMG" -> {
+                            BIMG bimg = new BIMG(im);
+                            if (im.length > 1)
+                                bimg.writeKeyValuePair("secondsPerFrame", 0.1f);
+                            bimg.save(file);
+                            endTime = System.nanoTime();
+                            System.out.println("Wrote bimg in " + (endTime - startTime) / 1000000.0f + "ms.");
+                        }
+                        case "BBF" -> {
+                            BBF bbf = new BBF(im);
+                            bbf.save(file);
+                            endTime = System.nanoTime();
+                            System.out.println("Wrote bbf in " + (endTime - startTime) / 1000000.0f + "ms.");
+                        }
+                        case "NFP" -> {
+                            NFP nfp = new NFP(im);
+                            nfp.save(file);
+                            endTime = System.nanoTime();
+                            System.out.println("Wrote nfp in " + (endTime - startTime) / 1000000.0f + "ms.");
+                        }
+                        default -> throw new IllegalStateException("No mode selected");
                     }
-                    palette = new Palette(paletteColorsInt);
-                } catch (NumberFormatException e) {
-                    System.out.println("Incorrectly formatted palette. Example usage: ");
-                    System.out.println("-p=1,2,0xFF0000");
-                    return;
+                } catch (IOException er) {
+                    System.out.println("Unable to save file " + er);
                 }
             }
-
-            if (commandLine.hasOption("spf"))
-                secondsPerFrame = Double.parseDouble(commandLine.getOptionValue("spf"));
-            args = commandLine.getArgs(); // reset args to contain JUST the needed information
-
-            if (commandLine.hasOption(option_bbf))
-                filetype = IM_FILETYPE.BBF;
-            else if (commandLine.hasOption(option_nfp))
-                filetype = IM_FILETYPE.NFP;
-
-            if (commandLine.hasOption(option_wipeFrames))
-                wipeFrames = true;
-
-
-            if (commandLine.hasOption(option_autoSingle))
-                autoSingle = true;
-
-        } catch (org.apache.commons.cli.ParseException exception) {
-            showHelp = true;
-        }
-        if (args.length < 2) {
-            showHelp = true;
-        } else {
-            try {
-                BufferedImage[] imageArr;
-                if (Objects.equals(FilenameUtils.getExtension(args[0]), "gif")) {
-                    // terrible check for a gif file
-                    imageArr = GifReader.openGif(new File(args[0]), wipeFrames);
-                } else {
-                    imageArr = new BufferedImage[]{ImageIO.read(new File(args[0]))};
+        } else if (event.equals("Save Preview")) {
+            // user requested to save the preview image
+            int returnVal = fc.showSaveDialog(frame);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                try {
+                    if (im == null)
+                        return;
+                    File outputFile = fc.getSelectedFile();
+                    ImageIO.write(im[0].getImage(), FilenameUtils.getExtension(outputFile.getName()), outputFile);
+                } catch (IOException ex) {
+                    System.out.println("Unable to save file " + ex);
                 }
-                IMode[] im = new IMode[imageArr.length];
-                Palette singlePalette = null;
-                for (int i = 0; i < imageArr.length; i++) {
-                    BufferedImage inputImage = imageArr[i];
-                    if (!uncapResolution) {
-                        final int MAX_WIDTH_HIGH = 102;
-                        final int MAX_HEIGHT_HIGH = 57;
-                        final int MAX_WIDTH_LOW = 51;
-                        final int MAX_HEIGHT_LOW = 19;
-                        if (inputImage.getWidth() > ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_WIDTH_HIGH
-                                : MAX_WIDTH_LOW)) {
-                            double scale = ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_WIDTH_HIGH
-                                    : MAX_WIDTH_LOW) / (double) inputImage.getWidth();
-                            System.out.println("Image is too wide, resizing! Was " + inputImage.getWidth() + " by " + inputImage.getHeight());
-                            inputImage = Mode.scaleImage(inputImage, scale, scale);
-                        }
-                        if (inputImage.getHeight() > ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_HEIGHT_HIGH
-                                : MAX_HEIGHT_LOW)) {
-                            double scale = ((mode == IM_MODE.HD || mode == IM_MODE.HD_AUTO) ? MAX_HEIGHT_HIGH
-                                    : MAX_HEIGHT_LOW) / (double) inputImage.getHeight();
-                            System.out.println("Image is too tall, resizing! Was " + inputImage.getWidth() + " by " + inputImage.getHeight());
-                            inputImage = Mode.scaleImage(inputImage, scale, scale);
-                        }
-                        System.out.println("Final resolution is " + inputImage.getWidth() + " by "
-                                + inputImage.getHeight());
-                    }
-                    long startTime = System.nanoTime();
-                    if (!autoSingle || i == 0) {
-                        im[i] = switch (mode) {
-                            case HD -> new ModeHighDensity(inputImage, palette, dither);
-                            case LD -> new ModeLowDensity(inputImage, palette, dither);
-                            case HD_AUTO -> new ModeHighDensity(inputImage, dither);
-                            case LD_AUTO -> new ModeLowDensity(inputImage, dither);
-                        };
-                    } else {
-                        im[i] = switch (mode) {
-                            case HD, HD_AUTO -> new ModeHighDensity(inputImage, singlePalette, dither);
-                            case LD, LD_AUTO -> new ModeLowDensity(inputImage, singlePalette, dither);
-                        };
-                    }
-                    if (i == 0 && autoSingle) {
-                        singlePalette = im[0].getPalette();
-                    }
-                    long endTime = System.nanoTime();
-                    System.out.println("Quantized image in " + (endTime - startTime) / 1000000.0f + "ms.");
-                    if (savePostImage) {
-                        startTime = System.nanoTime();
-                        if (imageArr.length > 1) {
-                            ImageIO.write(im[i].getImage(), FilenameUtils.getExtension(postImagePath),
-                                    new File(insertBeforeFileEx(postImagePath, String.valueOf(i))));
-                        } else {
-                            ImageIO.write(im[i].getImage(), FilenameUtils.getExtension(postImagePath),
-                                    new File(postImagePath));
-                        }
-                        endTime = System.nanoTime();
-                        System.out.println("Wrote post image in " + (endTime - startTime) / 1000000.0f + "ms.");
-                    }
-                }
-                long startTime = System.nanoTime();
-                long endTime;
-                switch (filetype) {
-                    case BIMG -> {
-                        BIMG bimg = new BIMG(im);
-                        if (imageArr.length > 1)
-                            bimg.writeKeyValuePair("secondsPerFrame", secondsPerFrame);
-                        bimg.save(args[1]);
-                        endTime = System.nanoTime();
-                        System.out.println("Wrote bimg in " + (endTime - startTime) / 1000000.0f + "ms.");
-                    }
-                    case BBF -> {
-                        BBF bbf = new BBF(im);
-                        bbf.save(args[1]);
-                        endTime = System.nanoTime();
-                        System.out.println("Wrote bbf in " + (endTime - startTime) / 1000000.0f + "ms.");
-                    }
-                    case NFP -> {
-                        NFP nfp = new NFP(im);
-                        nfp.save(args[1]);
-                        endTime = System.nanoTime();
-                        System.out.println("Wrote nfp in " + (endTime - startTime) / 1000000.0f + "ms.");
-                    }
-                }
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
-        }
-        if (showHelp) {
-            String header = "Convert an image into an bimg file.\n\n";
-            String footer = """
-                    """;
-
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("BIMG <input> <output>",
-                    header, options, footer, true);
+        } else if (event.equals("comboBoxChanged")) {
+            // The selected dithering mode was changed
+            boolean ditherModeIsOrdered = ditherMode.getSelectedItem().equals("Ordered");
+            thresholdMap.setVisible(ditherModeIsOrdered);
+            thresholdMapLabel.setVisible(ditherModeIsOrdered);
+            colorSpread.setVisible(ditherModeIsOrdered);
+            colorSpreadLabel.setVisible(ditherModeIsOrdered);
         }
     }
 
-    enum IM_FILETYPE {
+    private void refresh() {
+        im = getImages();
+        int scale = (int) visualScale.getValue();
+        outputImage.setIcon(new ImageIcon(Mode.scaleImage(im[0].getImage(), scale, scale)));
+        outputImage.repaint();
+        frame.pack();
+    }
+
+    private IMode[] getImages() {
+        Image image1 = image;
+        if (fitToMonitor.getState()) {
+            int xRes = Integer.parseInt(monitorHorizontal.getText());
+            int yRes = Integer.parseInt(monitorVertical.getText());
+            if (resolutionMode.getSelectedItem() == "HD") {
+                xRes *= 2;
+                yRes *= 3;
+            }
+            image1 = new Image(image.scale(xRes, yRes));
+        }
+        // perform checks for high resolution images
+        String palette = (String) paletteMode.getSelectedItem();
+        Mode.IM_MODE mode;
+        boolean autoMode = Objects.equals(palette, "Auto") || Objects.equals(palette, "AutoSingle");
+        int width = image1.imageArr[0].getWidth();
+        int height = image1.imageArr[0].getHeight();
+        int pixelCount = height * width;
+        if ((pixelCount > 400000 && autoMode) || pixelCount > 1500000) {
+            // give warning about image size
+            int result = JOptionPane.showConfirmDialog(null,
+                    "The image you are trying to process is " + pixelCount
+                            + " pixels (" + width + "x" + height
+                            + "). This may take a long time to process, proceed?", "Image is large",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (result != JOptionPane.YES_OPTION)
+                return null;
+        }
+        if (resolutionMode.getSelectedItem() == "HD") {
+            mode = autoMode ? Mode.IM_MODE.HD_AUTO : Mode.IM_MODE.HD;
+        } else {
+            mode = autoMode ? Mode.IM_MODE.LD_AUTO : Mode.IM_MODE.LD;
+        }
+        IDither dither = switch ((String) Objects.requireNonNull(ditherMode.getSelectedItem())) {
+            case "FloydSteinberg" -> new DitherFloydSteinberg();
+            case "Ordered" -> new DitherOrdered((int) thresholdMap.getSelectedItem(), (double) colorSpread.getValue());
+            case "None" -> new DitherNone();
+            default -> throw new IllegalStateException("Unexpected value: " + (String) ditherMode.getSelectedItem());
+        };
+        return image1.convert(mode, defaultPalette, dither,
+                Objects.equals((String) paletteMode.getSelectedItem(), "AutoSingle"));
+    }
+
+    enum resolutionModes {
+        HD,
+        LD
+    }
+
+    enum paletteModes {
+        Auto,
+        AutoSingle,
+        Default
+    }
+
+    enum ditherModes {
+        FloydSteinberg,
+        Ordered,
+        None
+    }
+
+    enum outputModes {
         BIMG,
         BBF,
         NFP
     }
-
-    static void writeToFile(String filename, int[] data) throws IOException {
-        FileOutputStream file = new FileOutputStream(filename);
-        for (int datum : data) {
-            file.write((byte) datum);
-        }
-        file.close();
-    }
-
-    static String insertBeforeFileEx(String filename, String insert) {
-        String modFilename = FilenameUtils.removeExtension(filename) + insert;
-        if (!Objects.equals(FilenameUtils.getExtension(filename), ""))
-            modFilename += "." + FilenameUtils.getExtension(filename);
-        return modFilename;
-    }
-
-    static int[] stringToInt(String str) {
-        int[] data = new int[str.length()];
-        for (int index = 0; index < str.length(); index++) {
-            data[index] = str.charAt(index);
-        }
-        return data;
-    }
-
-
 }
+

@@ -1,3 +1,10 @@
+package modes;
+
+import dithers.IDither;
+import palettes.Colors;
+import palettes.Palette;
+import palettes.PaletteImage;
+
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
@@ -6,14 +13,15 @@ public class ModeHighDensity implements IMode {
     private final int width;
     private final int height;
     private final PaletteImage image;
-    ModeHighDensity(BufferedImage image, Palette palette, IDither dither) {
+
+    public ModeHighDensity(BufferedImage image, Palette palette, IDither dither) {
         this.palette = palette;
         this.image = new PaletteImage(image, this.palette, dither);
         this.width = 2 * (this.image.getWidth() / 2);
         this.height = 3 * (this.image.getHeight() / 3);
     }
 
-    ModeHighDensity(BufferedImage image, IDither dither) {
+    public ModeHighDensity(BufferedImage image, IDither dither) {
         this(image, new Palette(KMeans.applyKMeans(image, 16)), dither);
     }
 

@@ -1,7 +1,7 @@
-# BIMG Generator
+# formats.BIMG Generator
 
 This is a java program to convert just about any format of image
-to the [BIMG](https://github.com/SkyTheCodeMaster/bimg) blit image
+to the [formats.BIMG](https://github.com/SkyTheCodeMaster/bimg) blit image
 format for ComputerCraft. Also has support for
 [bbf](https://github.com/9551-Dev/BLBFOR), a binary blit image format.
 
@@ -15,7 +15,7 @@ Compiled on Java 17 using
 and [Apache Commons IO](https://commons.apache.org/proper/commons-io/) 2.11.
 
 ```
-usage: BIMG <input> <output> [-auto] [-bbf] [-d] [-hd] [-ordered <arg>]
+usage: formats.BIMG <input> <output> [-auto] [-bbf] [-d] [-hd] [-ordered <arg>]
        [-p <arg>] [-post <arg>] [-spf <arg>] [--uncapresolution]
 Convert an image into an bimg file.
 

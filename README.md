@@ -1,4 +1,4 @@
-# formats.BIMG Generator
+# BIMG Generator
 
 This is a java program to convert just about any format of image
 to the [formats.BIMG](https://github.com/SkyTheCodeMaster/bimg) blit image
@@ -6,26 +6,22 @@ format for ComputerCraft. Also has support for
 [bbf](https://github.com/9551-Dev/BLBFOR), a binary blit image format.
 
 GIF animations are supported, though I've noticed sometimes
-frames go missing. Images are automatically scaled to fit within
-102x57 in HD and 51x19 in LD, the default resolution of a monitor.
-If the image already fits within that range, it is not scaled.
+frames go missing. You can optionally scale images to fit on a default terminal,
+or any larger terminal by putting in the screen resolution in characters.
 
 Compiled on Java 17 using
 [Apache Commons CLI](https://commons.apache.org/proper/commons-cli/) 1.5
 and [Apache Commons IO](https://commons.apache.org/proper/commons-io/) 2.11.
 
-```
-usage: formats.BIMG <input> <output> [-auto] [-bbf] [-d] [-hd] [-ordered <arg>]
-       [-p <arg>] [-post <arg>] [-spf <arg>] [--uncapresolution]
-Convert an image into an bimg file.
+## Usage
 
- -auto                  Automatically generate palette
- -bbf                   Save output in bbf format
- -d,--dither            Do Floyd-Steinberg dithering
- -hd                    High density
- -ordered <arg>         Do ordered dithering
- -p,--palette <arg>     Comma separated list of palette colors
- -post <arg>            Output processed image to path
- -spf <arg>             Seconds per frame
-    --uncapresolution   Uncap the resolution
-```
+To use this program simply run it.
+
+After you make changes in your setting push the refresh button in the top right to refresh
+the preview.
+
+The save preview button will save the current preview as an image,
+in the case of gifs this only saves the first frame.
+
+The save button will save the image in
+the specified format, matching the settings that are currently in the preview.

@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import static palettes.DefaultPalette.defaultPalette;
 
-public class ImageMaker implements ActionListener {
+public class ImageMakerGUI implements ActionListener {
     private final JFileChooser fc;
     JFrame frame;
     private Image image = null;
@@ -33,6 +33,7 @@ public class ImageMaker implements ActionListener {
     private JLabel outputImage;
     private JTextField monitorHorizontal;
     private JTextField monitorVertical;
+    private JComboBox<String> fitUnit;
     private Checkbox fitToMonitor;
     private JSpinner visualScale;
     private JLabel thresholdMapLabel;
@@ -42,12 +43,12 @@ public class ImageMaker implements ActionListener {
     private JComboBox<String> fileType;
     private IMode[] im = null;
 
-    public ImageMaker() {
+    public ImageMakerGUI() {
         fc = new JFileChooser();
     }
 
     public static void main(String[] args) {
-        ImageMaker main = new ImageMaker();
+        ImageMakerGUI main = new ImageMakerGUI();
         main.startGUI();
     }
 
@@ -100,12 +101,15 @@ public class ImageMaker implements ActionListener {
         frame.getContentPane().add(centerPanel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel();
-        bottomPanel.add(new JLabel("Chars X"));
+        bottomPanel.add(new JLabel("X"));
         monitorHorizontal = new JTextField("51", 3);
         bottomPanel.add(monitorHorizontal);
-        bottomPanel.add(new JLabel("Chars Y"));
+        bottomPanel.add(new JLabel("Y"));
         monitorVertical = new JTextField("19", 3);
         bottomPanel.add(monitorVertical);
+
+        fitUnit = new JComboBox<>(new String[]{"Chars", "Monitors"});
+        bottomPanel.add(fitUnit);
 
         fitToMonitor = new Checkbox("Fit to Size", true);
         bottomPanel.add(fitToMonitor);
@@ -221,6 +225,10 @@ public class ImageMaker implements ActionListener {
         if (fitToMonitor.getState()) {
             int xRes = Integer.parseInt(monitorHorizontal.getText());
             int yRes = Integer.parseInt(monitorVertical.getText());
+            if (fitUnit.getSelectedItem() == "Monitors") {
+                xRes = 15 + (21 * (xRes - 1));
+                yRes = 10 + (14 * (yRes - 1));
+            }
             if (resolutionMode.getSelectedItem() == "HD") {
                 xRes *= 2;
                 yRes *= 3;
@@ -253,10 +261,10 @@ public class ImageMaker implements ActionListener {
             case "FloydSteinberg" -> new DitherFloydSteinberg();
             case "Ordered" -> new DitherOrdered((int) thresholdMap.getSelectedItem(), (double) colorSpread.getValue());
             case "None" -> new DitherNone();
-            default -> throw new IllegalStateException("Unexpected value: " + (String) ditherMode.getSelectedItem());
+            default -> throw new IllegalStateException("Unexpected value: " + ditherMode.getSelectedItem());
         };
         return image1.convert(mode, defaultPalette, dither,
-                Objects.equals((String) paletteMode.getSelectedItem(), "AutoSingle"));
+                Objects.equals(paletteMode.getSelectedItem(), "AutoSingle"));
     }
 
     enum resolutionModes {

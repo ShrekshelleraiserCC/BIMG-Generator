@@ -16,13 +16,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
 import static palettes.DefaultPalette.defaultPalette;
 
-public class ImageMakerGUI implements ActionListener {
+public class ImageMakerGUI implements ActionListener, ItemListener {
+    static final String VERSION = "9.1";
     private final JFileChooser fc;
     JFrame frame;
     private Image image = null;
@@ -42,19 +45,40 @@ public class ImageMakerGUI implements ActionListener {
     private JSpinner colorSpread;
     private JComboBox<String> fileType;
     private IMode[] im = null;
+    private JLabel monitorHorizontalLabel;
+    private JLabel monitorVerticalLabel;
 
     public ImageMakerGUI() {
         fc = new JFileChooser();
     }
 
     public static void main(String[] args) {
+        System.out.println("BIMG Image Generator version " + ImageMakerGUI.VERSION);
+        System.out.println("Pass any arguments in to trigger the CLI version");
+        System.out.println("Run without any arguments to run the GUI");
+        if (args.length > 0) {
+            ImageMaker.main(args);
+            return;
+        }
+        try {
+            // Set System L&F
+            String LAF = UIManager.getSystemLookAndFeelClassName();
+            System.out.println("Attempting to set L&F " + LAF);
+            UIManager.setLookAndFeel(LAF);
+        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
+                 IllegalAccessException e) {
+            // handle exception
+            System.out.println("Error setting L&F " + e);
+        }
         ImageMakerGUI main = new ImageMakerGUI();
         main.startGUI();
     }
 
     public void startGUI() {
-        frame = new JFrame("BIMG Converter Version 9.0");
+        frame = new JFrame("BIMG Converter Version " + VERSION);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        SwingUtilities.updateComponentTreeUI(frame);
 
         JPanel topPanel = new JPanel();
 
@@ -101,10 +125,12 @@ public class ImageMakerGUI implements ActionListener {
         frame.getContentPane().add(centerPanel, BorderLayout.CENTER);
 
         JPanel bottomPanel = new JPanel();
-        bottomPanel.add(new JLabel("X"));
+        monitorHorizontalLabel = new JLabel("X");
+        bottomPanel.add(monitorHorizontalLabel);
         monitorHorizontal = new JTextField("51", 3);
         bottomPanel.add(monitorHorizontal);
-        bottomPanel.add(new JLabel("Y"));
+        monitorVerticalLabel = new JLabel("Y");
+        bottomPanel.add(monitorVerticalLabel);
         monitorVertical = new JTextField("19", 3);
         bottomPanel.add(monitorVertical);
 
@@ -112,6 +138,7 @@ public class ImageMakerGUI implements ActionListener {
         bottomPanel.add(fitUnit);
 
         fitToMonitor = new Checkbox("Fit to Size", true);
+        fitToMonitor.addItemListener(this);
         bottomPanel.add(fitToMonitor);
 
         bottomPanel.add(new JLabel("Preview scale"));
@@ -120,6 +147,7 @@ public class ImageMakerGUI implements ActionListener {
 
         fileType = new JComboBox<>(new String[]{"BIMG", "BBF", "NFP"});
         bottomPanel.add(fileType);
+        fileType.addActionListener(this);
         Button saveButton = new Button("Save");
         saveButton.addActionListener(this);
         bottomPanel.add(saveButton);
@@ -132,6 +160,8 @@ public class ImageMakerGUI implements ActionListener {
 
         frame.setMinimumSize(new Dimension(800, 500));
         frame.setVisible(true);
+
+
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -209,6 +239,17 @@ public class ImageMakerGUI implements ActionListener {
             thresholdMapLabel.setVisible(ditherModeIsOrdered);
             colorSpread.setVisible(ditherModeIsOrdered);
             colorSpreadLabel.setVisible(ditherModeIsOrdered);
+
+            boolean NFPSelected = fileType.getSelectedItem().equals("NFP");
+            resolutionMode.setEnabled(!NFPSelected);
+            paletteMode.setEnabled(!NFPSelected);
+
+            if (NFPSelected) {
+                resolutionMode.setSelectedIndex(0); // set resolution mode to LD
+                resolutionMode.getModel().setSelectedItem("LD"); // set resolution mode to LD
+                paletteMode.setSelectedIndex(2); // set palette to default
+                paletteMode.getModel().setSelectedItem("Default"); // set palette to default
+            }
         }
     }
 
@@ -221,7 +262,10 @@ public class ImageMakerGUI implements ActionListener {
     }
 
     private IMode[] getImages() {
-        Image image1 = image;
+        return getImages(image);
+    }
+
+    private IMode[] getImages(Image image1) {
         if (fitToMonitor.getState()) {
             int xRes = Integer.parseInt(monitorHorizontal.getText());
             int yRes = Integer.parseInt(monitorVertical.getText());
@@ -265,6 +309,17 @@ public class ImageMakerGUI implements ActionListener {
         };
         return image1.convert(mode, defaultPalette, dither,
                 Objects.equals(paletteMode.getSelectedItem(), "AutoSingle"));
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent itemEvent) {
+        System.out.println("Checkbox changed" + itemEvent);
+        // the fitToMonitor checkbox was changed
+        monitorHorizontal.setVisible(fitToMonitor.getState());
+        monitorHorizontalLabel.setVisible(fitToMonitor.getState());
+        monitorVertical.setVisible(fitToMonitor.getState());
+        monitorVerticalLabel.setVisible(fitToMonitor.getState());
+        fitUnit.setVisible(fitToMonitor.getState());
     }
 
     enum resolutionModes {

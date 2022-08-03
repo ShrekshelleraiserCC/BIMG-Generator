@@ -1,7 +1,7 @@
-package formats;
+package com.shrekshellraiser.formats;
 
-import modes.IMode;
-import utils.Utils;
+import com.shrekshellraiser.modes.IMode;
+import com.shrekshellraiser.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;

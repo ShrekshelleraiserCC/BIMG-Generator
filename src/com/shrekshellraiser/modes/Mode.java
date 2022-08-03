@@ -1,4 +1,4 @@
-package modes;
+package com.shrekshellraiser.modes;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

@@ -1,7 +1,7 @@
-package dithers;
+package com.shrekshellraiser.dithers;
 
-import palettes.Colors;
-import palettes.Palette;
+import com.shrekshellraiser.palettes.Colors;
+import com.shrekshellraiser.palettes.Palette;
 
 public class DitherFloydSteinberg implements IDither {
 

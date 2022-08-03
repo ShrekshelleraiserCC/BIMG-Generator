@@ -1,15 +1,17 @@
-import dithers.DitherFloydSteinberg;
-import dithers.DitherNone;
-import dithers.DitherOrdered;
-import dithers.IDither;
-import formats.BBF;
-import formats.BIMG;
-import formats.NFP;
-import image.Image;
-import modes.IMode;
-import modes.Mode;
+package com.shrekshellraiser;
+
+import com.shrekshellraiser.dithers.DitherFloydSteinberg;
+import com.shrekshellraiser.dithers.DitherNone;
+import com.shrekshellraiser.dithers.DitherOrdered;
+import com.shrekshellraiser.dithers.IDither;
+import com.shrekshellraiser.formats.BBF;
+import com.shrekshellraiser.formats.BIMG;
+import com.shrekshellraiser.formats.NFP;
+import com.shrekshellraiser.image.Image;
+import com.shrekshellraiser.modes.IMode;
+import com.shrekshellraiser.modes.Mode;
+import com.shrekshellraiser.utils.Utils;
 import org.apache.commons.io.FilenameUtils;
-import utils.Utils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -22,7 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 
-import static palettes.DefaultPalette.defaultPalette;
+import static com.shrekshellraiser.palettes.DefaultPalette.defaultPalette;
 
 public class ImageMakerGUI implements ActionListener, ItemListener {
     static final String VERSION = "9.1";
@@ -220,7 +222,7 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
                 }
             }
         } else if (event.equals("Save Preview")) {
-            // user requested to save the preview image
+            // user requested to save the preview com.shrekshellraiser.image
             int returnVal = fc.showSaveDialog(frame);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 try {
@@ -287,9 +289,9 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
         int height = image1.imageArr[0].getHeight();
         int pixelCount = height * width;
         if ((pixelCount > 400000 && autoMode) || pixelCount > 1500000) {
-            // give warning about image size
+            // give warning about com.shrekshellraiser.image size
             int result = JOptionPane.showConfirmDialog(null,
-                    "The image you are trying to process is " + pixelCount
+                    "The com.shrekshellraiser.image you are trying to process is " + pixelCount
                             + " pixels (" + width + "x" + height
                             + "). This may take a long time to process, proceed?", "Image is large",
                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);

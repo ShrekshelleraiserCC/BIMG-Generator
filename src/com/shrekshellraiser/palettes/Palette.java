@@ -1,4 +1,4 @@
-package palettes;
+package com.shrekshellraiser.palettes;
 
 import static java.lang.Math.sqrt;
 

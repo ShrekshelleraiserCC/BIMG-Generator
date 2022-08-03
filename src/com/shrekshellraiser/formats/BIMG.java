@@ -1,9 +1,9 @@
-package formats;
+package com.shrekshellraiser.formats;
 
-import modes.IMode;
-import palettes.DefaultPalette;
-import palettes.Palette;
-import utils.Utils;
+import com.shrekshellraiser.modes.IMode;
+import com.shrekshellraiser.palettes.DefaultPalette;
+import com.shrekshellraiser.palettes.Palette;
+import com.shrekshellraiser.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +16,7 @@ public class BIMG implements IFormat {
 
     public BIMG(IMode[] frames) {
         this.frames = frames;
-        file.append("{"); // Open root formats.BIMG table
+        file.append("{"); // Open root com.shrekshellraiser.formats.BIMG table
         for (int frameIndex = 0; frameIndex < this.frames.length; frameIndex++) {
             IMode frame = this.frames[frameIndex];
             file.append("{"); // Open frame
@@ -41,7 +41,7 @@ public class BIMG implements IFormat {
     public void save(String filename) throws IOException {
         writeMetadata();
         if (!finalized) {
-            file.append("}"); // Close root formats.BIMG table
+            file.append("}"); // Close root com.shrekshellraiser.formats.BIMG table
             finalized = true;
         }
         Utils.writeToFile(filename, Utils.stringToInt(file.toString()));
@@ -50,7 +50,7 @@ public class BIMG implements IFormat {
     public void save(File file) throws IOException {
         writeMetadata();
         if (!finalized) {
-            this.file.append("}"); // Close root formats.BIMG table
+            this.file.append("}"); // Close root com.shrekshellraiser.formats.BIMG table
             finalized = true;
         }
         Utils.writeToFile(file, Utils.stringToInt(this.file.toString()));
@@ -98,7 +98,7 @@ public class BIMG implements IFormat {
         if (!metadataWritten && !finalized) {
             final String version = "1.0.0";
             writeKeyValuePair("version", version);
-            writeKeyValuePair("creator", "Java formats.BIMG Generator");
+            writeKeyValuePair("creator", "Java com.shrekshellraiser.formats.BIMG Generator");
             if (frames.length > 1)
                 writeKeyValuePair("animation", true);
             metadataWritten = true;

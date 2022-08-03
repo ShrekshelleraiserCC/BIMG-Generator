@@ -1,9 +1,9 @@
 # BIMG Generator
 
-This is a java program to convert just about any format of image
-to the [formats.BIMG](https://github.com/SkyTheCodeMaster/bimg) blit image
+This is a java program to convert just about any format of com.shrekshellraiser.image
+to the [com.shrekshellraiser.formats.BIMG](https://github.com/SkyTheCodeMaster/bimg) blit com.shrekshellraiser.image
 format for ComputerCraft. Also has support for
-[bbf](https://github.com/9551-Dev/BLBFOR), a binary blit image format.
+[bbf](https://github.com/9551-Dev/BLBFOR), a binary blit com.shrekshellraiser.image format.
 
 GIF animations are supported, though I've noticed sometimes
 frames go missing. You can optionally scale images to fit on a default terminal,
@@ -11,17 +11,18 @@ or any larger terminal by putting in the screen resolution in characters.
 
 Compiled on Java 17 using
 [Apache Commons CLI](https://commons.apache.org/proper/commons-cli/) 1.5
+
 and [Apache Commons IO](https://commons.apache.org/proper/commons-io/) 2.11.
 
 ## Usage
 
-To use this program simply run it.
+To use this program simply run it. If you want to use the CLI version, simply pass in any arguments.
 
 After you make changes in your setting push the refresh button in the top right to refresh
 the preview.
 
-The save preview button will save the current preview as an image,
+The save preview button will save the current preview as an com.shrekshellraiser.image,
 in the case of gifs this only saves the first frame.
 
-The save button will save the image in
+The save button will save the com.shrekshellraiser.image in
 the specified format, matching the settings that are currently in the preview.

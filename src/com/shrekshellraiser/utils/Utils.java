@@ -1,4 +1,4 @@
-package utils;
+package com.shrekshellraiser.utils;
 
 import org.apache.commons.io.FilenameUtils;
 

@@ -1,6 +1,6 @@
-package dithers;
+package com.shrekshellraiser.dithers;
 
-import palettes.Palette;
+import com.shrekshellraiser.palettes.Palette;
 
 public class DitherNone implements IDither {
     @Override

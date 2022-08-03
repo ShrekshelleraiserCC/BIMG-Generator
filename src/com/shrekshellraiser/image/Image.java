@@ -1,14 +1,14 @@
-package image;
+package com.shrekshellraiser.image;
 
-import dithers.IDither;
-import formats.BBF;
-import formats.BIMG;
-import formats.Format;
-import formats.NFP;
-import modes.*;
+import com.shrekshellraiser.dithers.IDither;
+import com.shrekshellraiser.formats.BBF;
+import com.shrekshellraiser.formats.BIMG;
+import com.shrekshellraiser.formats.Format;
+import com.shrekshellraiser.formats.NFP;
+import com.shrekshellraiser.modes.*;
+import com.shrekshellraiser.palettes.Palette;
+import com.shrekshellraiser.utils.Utils;
 import org.apache.commons.io.FilenameUtils;
-import palettes.Palette;
-import utils.Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -83,7 +83,7 @@ public class Image {
                 singlePalette = im[0].getPalette();
             }
             long endTime = System.nanoTime();
-            System.out.println("Quantized image in " + (endTime - startTime) / 1000000.0f + "ms.");
+            System.out.println("Quantized com.shrekshellraiser.image in " + (endTime - startTime) / 1000000.0f + "ms.");
         }
         return im;
     }

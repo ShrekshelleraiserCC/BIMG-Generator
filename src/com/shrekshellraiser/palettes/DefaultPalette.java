@@ -1,4 +1,4 @@
-package palettes;
+package com.shrekshellraiser.palettes;
 
 public class DefaultPalette {
     public static final Palette defaultPalette = new Palette(new int[]{0xf0f0f0, 0xf2b233, 0xe57fd8, 0x99b2f2, 0xdede6c,

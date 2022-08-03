@@ -1,6 +1,6 @@
-package modes;
+package com.shrekshellraiser.modes;
 
-import palettes.Palette;
+import com.shrekshellraiser.palettes.Palette;
 
 import java.awt.image.BufferedImage;
 

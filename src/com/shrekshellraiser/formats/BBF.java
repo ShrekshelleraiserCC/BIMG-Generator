@@ -1,13 +1,13 @@
-package formats;
+package com.shrekshellraiser.formats;
 
-import modes.IMode;
-import palettes.Palette;
-import utils.Utils;
+import com.shrekshellraiser.modes.IMode;
+import com.shrekshellraiser.palettes.Palette;
+import com.shrekshellraiser.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 
-import static palettes.DefaultPalette.defaultPalette;
+import static com.shrekshellraiser.palettes.DefaultPalette.defaultPalette;
 
 public class BBF implements IFormat {
     private final IMode[] frames;

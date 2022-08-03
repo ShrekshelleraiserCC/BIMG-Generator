@@ -1,4 +1,4 @@
-package formats;
+package com.shrekshellraiser.formats;
 
 import java.io.File;
 import java.io.IOException;

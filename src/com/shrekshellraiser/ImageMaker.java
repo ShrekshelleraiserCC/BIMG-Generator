@@ -1,14 +1,16 @@
-import dithers.DitherFloydSteinberg;
-import dithers.DitherNone;
-import dithers.DitherOrdered;
-import dithers.IDither;
-import formats.BBF;
-import formats.BIMG;
-import formats.NFP;
-import modes.*;
+package com.shrekshellraiser;
+
+import com.shrekshellraiser.dithers.DitherFloydSteinberg;
+import com.shrekshellraiser.dithers.DitherNone;
+import com.shrekshellraiser.dithers.DitherOrdered;
+import com.shrekshellraiser.dithers.IDither;
+import com.shrekshellraiser.formats.BBF;
+import com.shrekshellraiser.formats.BIMG;
+import com.shrekshellraiser.formats.NFP;
+import com.shrekshellraiser.modes.*;
+import com.shrekshellraiser.palettes.Palette;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FilenameUtils;
-import palettes.Palette;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -36,7 +38,7 @@ public class ImageMaker {
         CommandLine commandLine;
         Option option_postImageFile = Option.builder("post")
                 .required(false)
-                .desc("Output processed image to path")
+                .desc("Output processed com.shrekshellraiser.image to path")
                 .hasArg(true)
                 .build();
         Option option_doDither = Option.builder("d")
@@ -240,7 +242,7 @@ public class ImageMaker {
                         singlePalette = im[0].getPalette();
                     }
                     long endTime = System.nanoTime();
-                    System.out.println("Quantized image in " + (endTime - startTime) / 1000000.0f + "ms.");
+                    System.out.println("Quantized com.shrekshellraiser.image in " + (endTime - startTime) / 1000000.0f + "ms.");
                     if (savePostImage) {
                         startTime = System.nanoTime();
                         if (imageArr.length > 1) {
@@ -251,7 +253,7 @@ public class ImageMaker {
                                     new File(postImagePath));
                         }
                         endTime = System.nanoTime();
-                        System.out.println("Wrote post image in " + (endTime - startTime) / 1000000.0f + "ms.");
+                        System.out.println("Wrote post com.shrekshellraiser.image in " + (endTime - startTime) / 1000000.0f + "ms.");
                     }
                 }
                 long startTime = System.nanoTime();
@@ -284,7 +286,7 @@ public class ImageMaker {
             }
         }
         if (showHelp) {
-            String header = "Convert an image into an bimg file.\n\n";
+            String header = "Convert an com.shrekshellraiser.image into an bimg file.\n\n";
             String footer = """
                     """;
 

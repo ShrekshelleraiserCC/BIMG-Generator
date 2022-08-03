@@ -1,6 +1,6 @@
-package palettes;
+package com.shrekshellraiser.palettes;
 
-import dithers.IDither;
+import com.shrekshellraiser.dithers.IDither;
 
 import java.awt.image.BufferedImage;
 

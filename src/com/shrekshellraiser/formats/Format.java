@@ -1,4 +1,4 @@
-package formats;
+package com.shrekshellraiser.formats;
 
 public enum Format {
     BIMG,

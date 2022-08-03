@@ -1,9 +1,9 @@
-package modes;
+package com.shrekshellraiser.modes;
 
-import dithers.IDither;
-import palettes.Colors;
-import palettes.Palette;
-import palettes.PaletteImage;
+import com.shrekshellraiser.dithers.IDither;
+import com.shrekshellraiser.palettes.Colors;
+import com.shrekshellraiser.palettes.Palette;
+import com.shrekshellraiser.palettes.PaletteImage;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;

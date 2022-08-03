@@ -1,11 +1,11 @@
 package com.shrekshellraiser.modes;
 
-import com.shrekshellraiser.palettes.Colors;
+import com.shrekshellraiser.palettes.Color;
 
 import java.awt.image.BufferedImage;
 
 public class KMeans {
-    public static int[] applyKMeans(BufferedImage image, int K) {
+    public static Color[] applyKMeans(BufferedImage image, int K) {
         int width = image.getWidth();
         int height = image.getHeight();
         int[] pixelArray = new int[width * height];
@@ -13,7 +13,7 @@ public class KMeans {
         Centroid[] centroidPoints = new Centroid[K];
         image.getRGB(0, 0, width, height, pixelArray, 0, width);
         for (int i = 0; i < width * height; i++) {
-            recordPoints[i] = new Record(pixelArray[i], centroidPoints);
+            recordPoints[i] = new Record(new Color(pixelArray[i]), centroidPoints);
         }
         // Here we have to choose our centroids
         centroidPoints[0] = new Centroid(recordPoints[(int) (Math.random() * centroidPoints.length)].location);
@@ -40,21 +40,20 @@ public class KMeans {
         boolean centroidsStayedPut = false;
         while (!centroidsStayedPut) {
             centroidsStayedPut = true;
-            int[][] averageCentroidLocation = new int[K][3];
+            Color[] averageCentroidLocation = new Color[K];
             int[] centroidCount = new int[K];
             for (int i = 0; i < K; i++) {
-                averageCentroidLocation[i] = new int[]{0,0,0};
+                averageCentroidLocation[i] = new Color(0, 0, 0);
                 centroidCount[i] = 0;
             }
             for (Record recordPoint : recordPoints) {
                 int centroidIndex = recordPoint.determineCentroid();
                 averageCentroidLocation[centroidIndex] =
-                        Colors.addArrays(averageCentroidLocation[centroidIndex], recordPoint.location);
+                        averageCentroidLocation[centroidIndex].add(recordPoint.location);
                 centroidCount[centroidIndex]++;
             }
             for (int i = 0; i < K; i++) {
-                averageCentroidLocation[i] = Colors.scaleArray(averageCentroidLocation[i],
-                        1.0f / centroidCount[i]);
+                averageCentroidLocation[i] = averageCentroidLocation[i].multiply(1.0f / centroidCount[i]);
                 centroidsStayedPut = centroidsStayedPut && centroidPoints[i].setLocation(averageCentroidLocation[i]);
             }
             iterations++;
@@ -83,9 +82,9 @@ public class KMeans {
 //                throw new RuntimeException(e);
 //            }
 //        }
-        int[] returnValue = new int[K];
+        Color[] returnValue = new Color[K];
         for (int i = 0; i < K; i++) {
-            returnValue[i] = Colors.combineColors(centroidPoints[i].location);
+            returnValue[i] = new Color(centroidPoints[i].location);
         }
         System.out.println("Found optimal colors in " + iterations + " iterations.");
         return returnValue;
@@ -93,14 +92,14 @@ public class KMeans {
 }
 
 class Centroid {
-    public int[] location;
+    public Color location;
 
-    Centroid(int[] location) {
+    Centroid(Color location) {
         this.location = location;
     }
 
-    public boolean setLocation(int[] location) {
-        if (Colors.combineColors(this.location) != Colors.combineColors(location)) {
+    public boolean setLocation(Color location) {
+        if (!new Color(this.location).equals(new Color(location))) {
             this.location = location;
             return false;
         }
@@ -109,19 +108,19 @@ class Centroid {
 }
 
 class Record {
-    public int[] location; // location in RGB space
+    public Color location; // location in RGB space
     private int closestCentroid = 0;
     private final Centroid[] centroids;
 
-    Record(int color, Centroid[] centroids) {
+    Record(Color color, Centroid[] centroids) {
         this.centroids = centroids;
-        location = Colors.splitColor(color);
+        location = color;
     }
 
     public int determineCentroid(int maxCentroid) {
-        double diff = Colors.getDifferenceBetweenColors(centroids[closestCentroid].location, location);
+        double diff = centroids[closestCentroid].location.diff(location);
         for (int index = 0; index < maxCentroid; index++) {
-            double lDiff = Colors.getDifferenceBetweenColors(centroids[index].location, this.location);
+            double lDiff = centroids[index].location.diff(this.location);
             if (lDiff < diff) {
                 diff = lDiff;
                 closestCentroid = index;
@@ -136,7 +135,7 @@ class Record {
 
     public double getWeight(int maxCentroid) {
         determineCentroid(maxCentroid);
-        return Math.pow(Colors.getDifferenceBetweenColors(location, centroids[closestCentroid].location), 2) /
+        return Math.pow(location.diff(centroids[closestCentroid].location), 2) /
                 Math.pow(0xFFFFFF, 2); // Normalize so max distance = 1.0
     }
 }

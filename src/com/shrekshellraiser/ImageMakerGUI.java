@@ -1,9 +1,6 @@
 package com.shrekshellraiser;
 
-import com.shrekshellraiser.dithers.DitherFloydSteinberg;
-import com.shrekshellraiser.dithers.DitherNone;
-import com.shrekshellraiser.dithers.DitherOrdered;
-import com.shrekshellraiser.dithers.IDither;
+import com.shrekshellraiser.dithers.*;
 import com.shrekshellraiser.formats.BBF;
 import com.shrekshellraiser.formats.BIMG;
 import com.shrekshellraiser.formats.NFP;
@@ -307,6 +304,7 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
             case "FloydSteinberg" -> new DitherFloydSteinberg();
             case "Ordered" -> new DitherOrdered((int) thresholdMap.getSelectedItem(), (double) colorSpread.getValue());
             case "None" -> new DitherNone();
+            case "BlueNoise" -> new DitherBlueNoise((int) colorSpread.getValue());
             default -> throw new IllegalStateException("Unexpected value: " + ditherMode.getSelectedItem());
         };
         return image1.convert(mode, defaultPalette, dither,
@@ -338,7 +336,8 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
     enum ditherModes {
         FloydSteinberg,
         Ordered,
-        None
+        None,
+        BlueNoise,
     }
 
     enum outputModes {

@@ -15,17 +15,17 @@ public class PaletteImage {
         this.width = image.getWidth();
         this.height = image.getHeight();
         int[] pixelArray = new int[width * height];
-        int[][][] rgbPixelArray = new int[width][height][3];
+        Color[][] colorPixelArr = new Color[width][height];
         this.imageArray = new int[width][height];
         image.getRGB(0, 0, width, height, pixelArray, 0, width);
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                rgbPixelArray[x][y] = Colors.splitColor(pixelArray[x + y * width]);
+                colorPixelArr[x][y] = new Color(pixelArray[x + y * width]);
             }
         }
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                imageArray[x][y] = dither.applyDither(x, y, rgbPixelArray, palette);
+                imageArray[x][y] = dither.applyDither(x, y, colorPixelArr, palette);
             }
         }
     }
@@ -35,7 +35,7 @@ public class PaletteImage {
         int[] buffer = new int[this.width*this.height];
         for (int x = 0; x < this.width; x++) {
             for (int y = 0; y < this.height; y++) {
-                buffer[x + y*this.width] = palette.getColor(this.imageArray[x][y]);
+                buffer[x + y * this.width] = palette.getColor(this.imageArray[x][y]).getColor();
             }
         }
         image.setRGB(0, 0, this.width, this.height, buffer, 0, this.width);
@@ -60,6 +60,6 @@ public class PaletteImage {
     }
 
     public int getPixelColor(int x, int y) {
-        return palette.getColor(this.imageArray[x][y]);
+        return palette.getColor(this.imageArray[x][y]).getColor();
     }
 }

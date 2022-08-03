@@ -1,7 +1,7 @@
 package com.shrekshellraiser.modes;
 
 import com.shrekshellraiser.dithers.IDither;
-import com.shrekshellraiser.palettes.Colors;
+import com.shrekshellraiser.palettes.Color;
 import com.shrekshellraiser.palettes.Palette;
 import com.shrekshellraiser.palettes.PaletteImage;
 
@@ -45,14 +45,13 @@ public class ModeHighDensity implements IMode {
             }
         }
         int[] crossPaletteLookup = {FGIndex, BGIndex};
-        Palette reducedPalette = new Palette(new int[]{palette.getColor(FGIndex), palette.getColor(BGIndex)});
+        Palette reducedPalette = new Palette(new Color[]{palette.getColor(FGIndex), palette.getColor(BGIndex)});
 
         int charCode = 0;
         for (int dy = 2; dy >= 0; dy--) {
             for (int dx = 1; dx >= 0; dx--) {
                 int index = image.getPixelIndex(x + dx, y + dy);
-                int reducedIndex = reducedPalette.getClosestPaletteIndex(Colors.splitColor(
-                        image.getPixelColor(x + dx, y + dy)));
+                int reducedIndex = reducedPalette.getClosestPaletteIndex(new Color(image.getPixelColor(x + dx, y + dy)));
                 image.setPixelIndex(x + dx, y + dy, crossPaletteLookup[reducedIndex]);
                 charCode = charCode << 1;
                 charCode += (reducedIndex == 0) ? 0 : 1;

@@ -1,6 +1,6 @@
 package com.shrekshellraiser.dithers;
 
-import com.shrekshellraiser.palettes.Colors;
+import com.shrekshellraiser.palettes.Color;
 import com.shrekshellraiser.palettes.Palette;
 
 public class DitherOrdered implements IDither {
@@ -37,9 +37,8 @@ public class DitherOrdered implements IDither {
     }
 
     @Override
-    public int applyDither(int x, int y, int[][][] rgbPixelArray, Palette palette) {
+    public int applyDither(int x, int y, Color[][] rgbPixelArray, Palette palette) {
         int colorOffset = (int) (colorSpread * (thresholdMap[x % thresholdMap.length][y % thresholdMap[0].length] - 1 / 2.0));
-        return palette.getClosestPaletteIndex(Colors.addArrays(rgbPixelArray[x][y], new int[]{colorOffset,
-                colorOffset, colorOffset}));
+        return palette.getClosestPaletteIndex(new Color(colorOffset, colorOffset, colorOffset).add(rgbPixelArray[x][y]));
     }
 }

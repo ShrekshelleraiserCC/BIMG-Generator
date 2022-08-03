@@ -24,7 +24,7 @@ import java.util.Objects;
 import static com.shrekshellraiser.palettes.DefaultPalette.defaultPalette;
 
 public class ImageMakerGUI implements ActionListener, ItemListener {
-    static final String VERSION = "9.2";
+    static final String VERSION = "9.3";
     private final JFileChooser fc;
     JFrame frame;
     private Image image = null;

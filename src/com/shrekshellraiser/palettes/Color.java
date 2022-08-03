@@ -71,6 +71,11 @@ public class Color {
         return add(c, 1);
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf(conv(new int[]{r, g, b}));
+    }
+
     public double diff(Color c) {
         int[] diff = new int[3];
         diff[0] = r - c.r;

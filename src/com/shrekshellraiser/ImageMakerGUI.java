@@ -24,7 +24,7 @@ import java.util.Objects;
 import static com.shrekshellraiser.palettes.DefaultPalette.defaultPalette;
 
 public class ImageMakerGUI implements ActionListener, ItemListener {
-    static final String VERSION = "9.1";
+    static final String VERSION = "9.2";
     private final JFileChooser fc;
     JFrame frame;
     private Image image = null;
@@ -236,8 +236,9 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
             boolean ditherModeIsOrdered = ditherMode.getSelectedItem().equals("Ordered");
             thresholdMap.setVisible(ditherModeIsOrdered);
             thresholdMapLabel.setVisible(ditherModeIsOrdered);
-            colorSpread.setVisible(ditherModeIsOrdered);
-            colorSpreadLabel.setVisible(ditherModeIsOrdered);
+            boolean ditherModeIsNoise = ditherMode.getSelectedItem().equals("BlueNoise");
+            colorSpread.setVisible(ditherModeIsOrdered || ditherModeIsNoise);
+            colorSpreadLabel.setVisible(ditherModeIsOrdered || ditherModeIsNoise);
 
             boolean NFPSelected = fileType.getSelectedItem().equals("NFP");
             resolutionMode.setEnabled(!NFPSelected);
@@ -304,7 +305,7 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
             case "FloydSteinberg" -> new DitherFloydSteinberg();
             case "Ordered" -> new DitherOrdered((int) thresholdMap.getSelectedItem(), (double) colorSpread.getValue());
             case "None" -> new DitherNone();
-            case "BlueNoise" -> new DitherBlueNoise((int) colorSpread.getValue());
+            case "BlueNoise" -> new DitherBlueNoise((double) colorSpread.getValue());
             default -> throw new IllegalStateException("Unexpected value: " + ditherMode.getSelectedItem());
         };
         return image1.convert(mode, defaultPalette, dither,

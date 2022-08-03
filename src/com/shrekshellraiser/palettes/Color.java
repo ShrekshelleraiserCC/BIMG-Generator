@@ -26,7 +26,9 @@ public class Color {
     }
 
     private static int conv(int[] rgb) {
-        return ((rgb[0] << 16) + ((rgb[1] << 8) & 0xFF) + (rgb[2] & 0xFF));
+        return (((rgb[0] & 0xFF) << 16) +
+                ((rgb[1] & 0xFF) << 8) +
+                (rgb[2] & 0xFF));
     }
 
     private static int[] conv(int rgb) {
@@ -41,7 +43,7 @@ public class Color {
     public boolean equals(Object obj) {
         if (obj instanceof Color tmp) {
             // compare colors
-            return (r == tmp.r && g == tmp.g && b == tmp.g);
+            return (r == tmp.r && g == tmp.g && b == tmp.b);
         }
         return false;
     }
@@ -62,7 +64,7 @@ public class Color {
         return new Color(
                 r + c.r * scale,
                 g + c.g * scale,
-                b + c.g * scale);
+                b + c.b * scale);
     }
 
     public Color add(Color c) {
@@ -74,6 +76,6 @@ public class Color {
         diff[0] = r - c.r;
         diff[1] = g - c.g;
         diff[2] = b - c.b;
-        return sqrt(diff[0] * diff[0] + diff[1] * diff[1] + diff[2] * diff[2]);
+        return sqrt((diff[0] * diff[0]) + (diff[1] * diff[1]) + (diff[2] * diff[2]));
     }
 }

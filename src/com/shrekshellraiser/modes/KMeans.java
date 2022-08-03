@@ -57,31 +57,8 @@ public class KMeans {
                 centroidsStayedPut = centroidsStayedPut && centroidPoints[i].setLocation(averageCentroidLocation[i]);
             }
             iterations++;
+            if (iterations > 1000) break;
         }
-//        final boolean saveCSV = false;
-//        if (saveCSV) {
-//            StringBuilder csvData = new StringBuilder();
-//            for (Record record : recordPoints) {
-//                csvData.append(record.location[0]).append(",").append(record.location[1])
-//                        .append(",").append(record.location[2]).append("\n");
-//            }
-//            try {
-//                Utils.writeToFile("data.csv", Utils.stringToInt(csvData.toString()));
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//            csvData = new StringBuilder();
-//            for (Centroid centroid : centroidPoints) {
-//                csvData.append(centroid.location[0]).append(",").append(centroid.location[1])
-//                        .append(",").append(centroid.location[2]).append("\n");
-//            }
-//            try {
-//                Utils.writeToFile("centroid.csv", Utils.stringToInt(csvData.toString()));
-//            } catch (IOException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
         Color[] returnValue = new Color[K];
         for (int i = 0; i < K; i++) {
             returnValue[i] = new Color(centroidPoints[i].location);
@@ -99,7 +76,7 @@ class Centroid {
     }
 
     public boolean setLocation(Color location) {
-        if (!new Color(this.location).equals(new Color(location))) {
+        if (!this.location.equals(location)) {
             this.location = location;
             return false;
         }

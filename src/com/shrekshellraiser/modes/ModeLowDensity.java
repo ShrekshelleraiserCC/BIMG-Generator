@@ -11,21 +11,31 @@ public class ModeLowDensity implements IMode {
     private final int width;
     private final int height;
     private final PaletteImage image;
+    private final int charCode;
 
-    public ModeLowDensity(BufferedImage image, Palette palette, IDither dither) {
+    public ModeLowDensity(BufferedImage image, Palette palette, IDither dither, int charCode) {
         this.palette = palette;
         this.image = new PaletteImage(image, this.palette, dither);
         this.width = this.image.getWidth();
         this.height = this.image.getHeight();
+        this.charCode = charCode;
+    }
+
+    public ModeLowDensity(BufferedImage image, Palette palette, IDither dither) {
+        this(image, palette, dither, 159);
+    }
+
+    public ModeLowDensity(BufferedImage image, IDither dither, int charCode) {
+        this(image, new Palette(KMeans.applyKMeans(image, 16)), dither, charCode);
     }
 
     public ModeLowDensity(BufferedImage image, IDither dither) {
-        this(image, new Palette(KMeans.applyKMeans(image, 16)), dither);
+        this(image, dither, 159);
     }
 
     private char[] getChar(int x, int y) {
         // Now that we established which 2 colors are most prevalent here
-        return new char[]{159, Integer.toHexString(image.getPixelIndex(x, y)).charAt(0)
+        return new char[]{(char) this.charCode, Integer.toHexString(image.getPixelIndex(x, y)).charAt(0)
                 , Integer.toHexString(image.getPixelIndex(x, y)).charAt(0)};
     }
 

@@ -29,6 +29,7 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
     JFrame frame;
     private Image image = null;
     private JComboBox<String> resolutionMode;
+    private JSpinner blitChar;
     private JComboBox<String> paletteMode;
     private JComboBox<String> ditherMode;
     private JCheckBox wipeFrames;
@@ -81,12 +82,17 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
 
         JPanel topPanel = new JPanel();
 
-        Button openButton = new Button("Open");
+        Button openButton = new Button("Open"); // top bar
         openButton.addActionListener(this);
         topPanel.add(openButton);
 
         resolutionMode = new JComboBox<>(Utils.getNames(resolutionModes.class));
         topPanel.add(resolutionMode);
+        resolutionMode.addActionListener(this);
+
+        blitChar = new JSpinner(new SpinnerNumberModel(159, 1, 255, 1));
+        topPanel.add(blitChar);
+        blitChar.setVisible(false);
 
         paletteMode = new JComboBox<>(Utils.getNames(paletteModes.class));
         topPanel.add(paletteMode);
@@ -117,13 +123,13 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
 
         frame.getContentPane().add(topPanel, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel();
+        JPanel centerPanel = new JPanel(); // center preview
         outputImage = new JLabel();
         centerPanel.add(outputImage);
 
         frame.getContentPane().add(centerPanel, BorderLayout.CENTER);
 
-        JPanel bottomPanel = new JPanel();
+        JPanel bottomPanel = new JPanel(); // bottom bar
         monitorHorizontalLabel = new JLabel("X");
         bottomPanel.add(monitorHorizontalLabel);
         monitorHorizontal = new JTextField("51", 3);
@@ -240,6 +246,8 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
             colorSpread.setVisible(ditherModeIsOrdered || ditherModeIsNoise);
             colorSpreadLabel.setVisible(ditherModeIsOrdered || ditherModeIsNoise);
 
+            blitChar.setVisible(resolutionMode.getSelectedItem().equals("LD"));
+
             boolean NFPSelected = fileType.getSelectedItem().equals("NFP");
             resolutionMode.setEnabled(!NFPSelected);
             paletteMode.setEnabled(!NFPSelected);
@@ -309,7 +317,7 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
             default -> throw new IllegalStateException("Unexpected value: " + ditherMode.getSelectedItem());
         };
         return image1.convert(mode, defaultPalette, dither,
-                Objects.equals(paletteMode.getSelectedItem(), "AutoSingle"));
+                Objects.equals(paletteMode.getSelectedItem(), "AutoSingle"), (Integer) blitChar.getValue());
     }
 
     @Override

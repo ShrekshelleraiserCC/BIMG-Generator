@@ -25,7 +25,8 @@ public class ModeLowDensity implements IMode {
 
     private char[] getChar(int x, int y) {
         // Now that we established which 2 colors are most prevalent here
-        return new char[]{' ',' ',Integer.toHexString(image.getPixelIndex(x,y)).charAt(0)};
+        return new char[]{159, Integer.toHexString(image.getPixelIndex(x, y)).charAt(0)
+                , Integer.toHexString(image.getPixelIndex(x, y)).charAt(0)};
     }
 
     private String[] getRow(int rowNum) {

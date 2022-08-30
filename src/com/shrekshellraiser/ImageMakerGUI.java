@@ -24,7 +24,7 @@ import java.util.Objects;
 import static com.shrekshellraiser.palettes.DefaultPalette.defaultPalette;
 
 public class ImageMakerGUI implements ActionListener, ItemListener {
-    static final String VERSION = "9.4";
+    static final String VERSION = "9.5";
     private final JFileChooser fc;
     JFrame frame;
     private Image image = null;
@@ -60,16 +60,16 @@ public class ImageMakerGUI implements ActionListener, ItemListener {
             ImageMaker.main(args);
             return;
         }
-        try {
-            // Set System L&F
-            String LAF = UIManager.getSystemLookAndFeelClassName();
-            System.out.println("Attempting to set L&F " + LAF);
-            UIManager.setLookAndFeel(LAF);
-        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
-                 IllegalAccessException e) {
-            // handle exception
-            System.out.println("Error setting L&F " + e);
-        }
+//        try {
+//            // Set System L&F
+//            String LAF = UIManager.getSystemLookAndFeelClassName();
+//            System.out.println("Attempting to set L&F " + LAF);
+//            UIManager.setLookAndFeel(LAF);
+//        } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException |
+//                 IllegalAccessException e) {
+//            // handle exception
+//            System.out.println("Error setting L&F " + e);
+//        }
         ImageMakerGUI main = new ImageMakerGUI();
         main.startGUI();
     }

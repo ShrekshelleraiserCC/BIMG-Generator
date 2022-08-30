@@ -98,9 +98,9 @@ public class BIMG implements IFormat {
         if (!metadataWritten && !finalized) {
             final String version = "1.0.0";
             writeKeyValuePair("version", version);
-            writeKeyValuePair("creator", "Java com.shrekshellraiser.formats.BIMG Generator");
+            writeKeyValuePair("creator", "BIMG Generator");
             if (frames.length > 1)
-                writeKeyValuePair("animation", true);
+                writeKeyValuePair("animated", true);
             metadataWritten = true;
         }
     }

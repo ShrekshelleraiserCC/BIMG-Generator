@@ -1,4 +1,4 @@
-package com.shrekshellraiser.modes;
+package com.shrekshellraiser.utils;
 
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;

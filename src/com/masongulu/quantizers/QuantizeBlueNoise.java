@@ -1,7 +1,6 @@
 package com.masongulu.quantizers;
 
 import com.masongulu.colors.Color;
-import com.masongulu.colors.Palette;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -14,8 +13,7 @@ public class QuantizeBlueNoise extends QuantizeNone {
     private final JSpinner colorSpread = new JSpinner(new SpinnerNumberModel(50, 5, 200, 5));
     private BufferedImage noise;
 
-    public QuantizeBlueNoise(Palette palette) {
-        super(palette);
+    public QuantizeBlueNoise() {
         panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -47,5 +45,10 @@ public class QuantizeBlueNoise extends QuantizeNone {
             }
         }
         return paletteArr;
+    }
+
+    @Override
+    public String toString() {
+        return "Blue Noise";
     }
 }

@@ -1,14 +1,8 @@
 package com.masongulu.quantizers;
 
 import com.masongulu.colors.Color;
-import com.masongulu.colors.Palette;
 
 public class QuantizeFloydSteinberg extends QuantizeNone {
-
-    public QuantizeFloydSteinberg(Palette palette) {
-        super(palette);
-    }
-
     @Override
     protected int[][] applyDither(Color[][] RGBImage) {
         int[][] paletteArr = new int[RGBImage[0].length][RGBImage.length];
@@ -31,5 +25,10 @@ public class QuantizeFloydSteinberg extends QuantizeNone {
             }
         }
         return paletteArr;
+    }
+
+    @Override
+    public String toString() {
+        return "Floyd Steinberg";
     }
 }

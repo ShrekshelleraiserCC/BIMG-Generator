@@ -1,7 +1,6 @@
 package com.masongulu.quantizers;
 
 import com.masongulu.colors.Color;
-import com.masongulu.colors.Palette;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,8 +32,7 @@ public class QuantizeOrdered extends QuantizeNone {
     private final JSpinner colorSpread = new JSpinner(new SpinnerNumberModel(50, 5, 200, 5));
     private final JComboBox<Integer> thresholdMapSelect = new JComboBox<>(new Integer[]{2, 4, 8});
 
-    public QuantizeOrdered(Palette palette) {
-        super(palette);
+    public QuantizeOrdered() {
         panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -69,5 +67,10 @@ public class QuantizeOrdered extends QuantizeNone {
             }
         }
         return paletteArr;
+    }
+
+    @Override
+    public String toString() {
+        return "Ordered";
     }
 }

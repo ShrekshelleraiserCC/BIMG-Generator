@@ -9,17 +9,14 @@ import java.awt.image.BufferedImage;
 
 public class QuantizeNone {
     protected Palette palette;
-    protected JPanel panel = new JPanel();
-
-    public QuantizeNone(Palette palette) {
-        this.palette = palette;
-    }
+    protected JPanel panel;
 
     public JPanel getPanel() {
         return panel;
     }
 
-    public PaletteImage quantize(BufferedImage image) {
+    public PaletteImage quantize(BufferedImage image, Palette palette) {
+        this.palette = palette;
         int width = image.getWidth();
         int height = image.getHeight();
         int[] pixelArray = new int[width * height];
@@ -45,5 +42,10 @@ public class QuantizeNone {
             }
         }
         return paletteArr;
+    }
+
+    @Override
+    public String toString() {
+        return "None";
     }
 }

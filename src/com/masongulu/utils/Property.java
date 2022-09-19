@@ -1,17 +1,18 @@
 package com.masongulu.utils;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class Property <T> {
+public class Property<T> {
     private T val;
     private final ArrayList<IValueChange<T>> listeners = new ArrayList<>();
 
-    public T getVal() {
+    public T get() {
         return val;
     }
 
-    public void setVal(T val) {
-        if (val != this.val) {
+    public void set(T val) {
+        if (!Objects.equals(val, this.val)) {
             for (IValueChange<T> listener : listeners) {
                 listener.update(this.val, val);
             }

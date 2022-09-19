@@ -1,4 +1,4 @@
-package com.shrekshellraiser.colors;
+package com.masongulu.colors;
 
 import java.awt.image.BufferedImage;
 

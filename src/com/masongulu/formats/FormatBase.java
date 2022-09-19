@@ -1,6 +1,6 @@
-package com.shrekshellraiser.formats;
+package com.masongulu.formats;
 
-import com.shrekshellraiser.blit.BlitMap;
+import com.masongulu.blit.BlitMap;
 
 import java.io.File;
 

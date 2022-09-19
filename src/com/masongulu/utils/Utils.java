@@ -1,4 +1,4 @@
-package com.shrekshellraiser.utils;
+package com.masongulu.utils;
 
 import org.apache.commons.io.FilenameUtils;
 

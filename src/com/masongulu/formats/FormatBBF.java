@@ -1,13 +1,13 @@
-package com.shrekshellraiser.formats;
+package com.masongulu.formats;
 
-import com.shrekshellraiser.blit.BlitMap;
-import com.shrekshellraiser.colors.Palette;
-import com.shrekshellraiser.utils.Utils;
+import com.masongulu.blit.BlitMap;
+import com.masongulu.colors.Palette;
+import com.masongulu.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 
-import static com.shrekshellraiser.colors.Palette.defaultPalette;
+import static com.masongulu.colors.Palette.defaultPalette;
 
 public class FormatBBF extends FormatBase {
     @Override

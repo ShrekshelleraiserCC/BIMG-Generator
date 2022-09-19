@@ -1,7 +1,7 @@
-package com.shrekshellraiser.quantizers;
+package com.masongulu.quantizers;
 
-import com.shrekshellraiser.colors.Color;
-import com.shrekshellraiser.colors.Palette;
+import com.masongulu.colors.Color;
+import com.masongulu.colors.Palette;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,20 +35,20 @@ public class QuantizeOrdered extends QuantizeNone {
 
     public QuantizeOrdered(Palette palette) {
         super(palette);
-        frame = new JPanel(new GridBagLayout());
+        panel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
         c.gridy = 0;
-        frame.add(new JLabel("Color spread"), c);
+        panel.add(new JLabel("Color spread"), c);
         c.gridx = 1;
-        frame.add(colorSpread, c);
+        panel.add(colorSpread, c);
 
         c.gridx = 0;
         c.gridy = 1;
-        frame.add(new JLabel("Threshold map"), c);
+        panel.add(new JLabel("Threshold map"), c);
         c.gridx = 1;
-        frame.add(thresholdMapSelect, c);
+        panel.add(thresholdMapSelect, c);
     }
 
     @Override

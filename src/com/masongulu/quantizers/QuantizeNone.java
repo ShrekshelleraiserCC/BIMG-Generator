@@ -1,22 +1,22 @@
-package com.shrekshellraiser.quantizers;
+package com.masongulu.quantizers;
 
-import com.shrekshellraiser.colors.Color;
-import com.shrekshellraiser.colors.Palette;
-import com.shrekshellraiser.colors.PaletteImage;
+import com.masongulu.colors.Color;
+import com.masongulu.colors.Palette;
+import com.masongulu.colors.PaletteImage;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 
 public class QuantizeNone {
     protected Palette palette;
-    protected JPanel frame = new JPanel();
+    protected JPanel panel = new JPanel();
 
     public QuantizeNone(Palette palette) {
         this.palette = palette;
     }
 
-    public JPanel getFrame() {
-        return frame;
+    public JPanel getPanel() {
+        return panel;
     }
 
     public PaletteImage quantize(BufferedImage image) {

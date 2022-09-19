@@ -1,8 +1,8 @@
-package com.shrekshellraiser.blit;
+package com.masongulu.blit;
 
-import com.shrekshellraiser.colors.Color;
-import com.shrekshellraiser.colors.Palette;
-import com.shrekshellraiser.colors.PaletteImage;
+import com.masongulu.colors.Color;
+import com.masongulu.colors.Palette;
+import com.masongulu.colors.PaletteImage;
 
 import java.util.Arrays;
 

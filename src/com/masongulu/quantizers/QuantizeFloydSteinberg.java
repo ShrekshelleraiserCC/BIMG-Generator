@@ -1,7 +1,7 @@
-package com.shrekshellraiser.quantizers;
+package com.masongulu.quantizers;
 
-import com.shrekshellraiser.colors.Color;
-import com.shrekshellraiser.colors.Palette;
+import com.masongulu.colors.Color;
+import com.masongulu.colors.Palette;
 
 public class QuantizeFloydSteinberg extends QuantizeNone {
 

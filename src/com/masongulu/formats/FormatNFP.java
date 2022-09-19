@@ -1,7 +1,7 @@
-package com.shrekshellraiser.formats;
+package com.masongulu.formats;
 
-import com.shrekshellraiser.blit.BlitMap;
-import com.shrekshellraiser.utils.Utils;
+import com.masongulu.blit.BlitMap;
+import com.masongulu.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;

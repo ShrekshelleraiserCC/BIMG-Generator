@@ -1,7 +1,7 @@
-package com.shrekshellraiser.filters;
+package com.masongulu.filters;
 
 
-import com.shrekshellraiser.utils.Utils;
+import com.masongulu.utils.Utils;
 
 import javax.swing.*;
 import java.awt.image.BufferedImage;

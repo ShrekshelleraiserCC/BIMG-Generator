@@ -1,4 +1,4 @@
-package com.shrekshellraiser.colors;
+package com.masongulu.colors;
 
 public class Palette {
     private Color[] colors;

@@ -1,5 +1,6 @@
 package com.masongulu.formats;
 
+import com.masongulu.ImageMakerGUI;
 import com.masongulu.blit.BlitMap;
 import com.masongulu.colors.Palette;
 import com.masongulu.utils.LuaTable;
@@ -35,7 +36,7 @@ public class FormatBIMG extends FormatBase {
         }
         final String version = "1.0.0";
         table.put("version", version);
-        table.put("creator", "BIMG Generator");
+        table.put("creator", "BIMG Generator " + ImageMakerGUI.VERSION);
         if (blitMaps.length > 1)
             table.put("animated", true);
         try {

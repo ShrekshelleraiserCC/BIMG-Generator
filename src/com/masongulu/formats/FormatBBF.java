@@ -1,5 +1,6 @@
 package com.masongulu.formats;
 
+import com.masongulu.ImageMakerGUI;
 import com.masongulu.blit.BlitMap;
 import com.masongulu.colors.Palette;
 import com.masongulu.utils.Utils;
@@ -18,7 +19,8 @@ public class FormatBBF extends FormatBase {
                 .append(blitMaps.length).append("\n")
                 .append(System.currentTimeMillis()).append("\n"); // This is supposed to be os.epoch("utc") in lua
         if (blitMaps[0].getPalette().equals(defaultPalette))
-            fileDataStringBuilder.append("{}").append("\n"); // this is supposed to be a "meta" parameter
+            fileDataStringBuilder.append("{\"author\": \"BIMG Generator " + ImageMakerGUI.VERSION + "\"}")
+                    .append("\n"); // this is supposed to be a "meta" parameter
         else {
             fileDataStringBuilder.append("{\"palette\":["); // Open meta
             for (BlitMap frame : blitMaps) {
@@ -36,16 +38,17 @@ public class FormatBBF extends FormatBase {
                 if (frame != blitMaps[blitMaps.length - 1])
                     fileDataStringBuilder.append(",");
             }
-            fileDataStringBuilder.append("]}\n");
+            fileDataStringBuilder.append("],").append("\"author\": \"BIMG Generator " + ImageMakerGUI.VERSION + "\"").append("}\n");
         }
         for (BlitMap frame : blitMaps) {
             for (int line = 0; line < frame.getHeight(); line++) {
-                fileDataStringBuilder.append(frame.getCharacter(line));
+                String chars = frame.getCharacter(line);
                 String FGChars = frame.getFG(line);
                 String BGChars = frame.getBG(line);
                 for (int ch = 0; ch < frame.getWidth(); ch++) {
                     int FG = Character.digit(FGChars.charAt(ch), 16);
                     int BG = Character.digit(BGChars.charAt(ch), 16);
+                    fileDataStringBuilder.append(chars.charAt(ch));
                     fileDataStringBuilder.append((char) ((FG << 4) + BG));
                 }
             }

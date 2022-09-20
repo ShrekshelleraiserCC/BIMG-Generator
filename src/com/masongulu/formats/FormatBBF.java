@@ -58,7 +58,7 @@ public class FormatBBF extends FormatBase {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "bbf";
     }
 }

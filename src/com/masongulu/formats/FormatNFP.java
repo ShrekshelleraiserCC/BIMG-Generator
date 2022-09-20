@@ -22,7 +22,7 @@ public class FormatNFP extends FormatBase {
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "nfp";
     }
 

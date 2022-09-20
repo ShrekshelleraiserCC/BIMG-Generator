@@ -27,6 +27,15 @@ public class QuantizeOrdered extends QuantizeNone {
                 {15, 47, 7, 39, 13, 45, 5, 37},
                 {63, 31, 55, 23, 61, 29, 53, 21}
         });
+        for (int i = 1; i < 4; i++) {
+            int thresholdMapSize = (int) Math.pow(2, i);
+            double[][] thresholdMapI = thresholdMap.get(thresholdMapSize);
+            for (int row = 0; row < thresholdMapI.length; row++) {
+                for (int column = 0; column < thresholdMapI[0].length; column++) {
+                    thresholdMapI[row][column] *= 1 / Math.pow(2, thresholdMapSize);
+                }
+            }
+        }
     }
 
     private final JSpinner colorSpread = new JSpinner(new SpinnerNumberModel(50, 5, 200, 5));
@@ -51,9 +60,9 @@ public class QuantizeOrdered extends QuantizeNone {
 
     @Override
     protected int[][] applyDither(Color[][] RGBImage) {
-        int[][] paletteArr = new int[RGBImage[0].length][RGBImage.length];
-        int width = RGBImage[0].length;
-        int height = RGBImage.length;
+        int[][] paletteArr = new int[RGBImage.length][RGBImage[0].length];
+        int width = RGBImage.length;
+        int height = RGBImage[0].length;
         double[][] thresholdMap = QuantizeOrdered.thresholdMap.get((Integer) thresholdMapSelect.getSelectedItem());
         int colorSpread = (int) this.colorSpread.getValue();
         for (int y = 0; y < height; y++) {
@@ -61,7 +70,7 @@ public class QuantizeOrdered extends QuantizeNone {
                 int colorOffset = (int) (colorSpread *
                         (thresholdMap[x % thresholdMap.length][y % thresholdMap[0].length] - 1 / 2.0));
                 int paletteIndex = palette.getClosestPaletteIndex(
-                        new Color(colorOffset, colorOffset, colorOffset).add(RGBImage[y][x]));
+                        new Color(colorOffset, colorOffset, colorOffset).add(RGBImage[x][y]));
 
                 paletteArr[x][y] = paletteIndex;
             }

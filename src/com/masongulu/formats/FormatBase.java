@@ -7,7 +7,7 @@ import java.io.File;
 public abstract class FormatBase {
     public abstract void save(BlitMap[] blitMaps, File file);
 
-    public abstract String getName();
+    public abstract String toString();
 
     public boolean supportCharacters() {
         return true;

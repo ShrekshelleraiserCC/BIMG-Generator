@@ -33,9 +33,9 @@ public class QuantizeNone {
     }
 
     protected int[][] applyDither(Color[][] RGBImage) {
-        int[][] paletteArr = new int[RGBImage[0].length][RGBImage.length];
-        int width = RGBImage[0].length;
-        int height = RGBImage.length;
+        int[][] paletteArr = new int[RGBImage.length][RGBImage[0].length];
+        int width = RGBImage.length;
+        int height = RGBImage[0].length;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 paletteArr[x][y] = palette.getClosestPaletteIndex(RGBImage[x][y]);

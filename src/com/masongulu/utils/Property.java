@@ -7,6 +7,13 @@ public class Property<T> {
     private T val;
     private final ArrayList<IValueChange<T>> listeners = new ArrayList<>();
 
+    public Property() {
+    }
+
+    public Property(T val) {
+        this.val = val;
+    }
+
     public T get() {
         return val;
     }
@@ -25,6 +32,3 @@ public class Property<T> {
     }
 }
 
-interface IValueChange<T> {
-    void update(T oldValue, T newValue);
-}

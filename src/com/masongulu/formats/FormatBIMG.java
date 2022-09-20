@@ -48,13 +48,15 @@ public class FormatBIMG extends FormatBase {
     private LuaTable writePalette(Palette colors) {
         LuaTable paletteTable = new LuaTable();
         for (int colorIndex = 0; colorIndex < colors.getLength(); colorIndex++) {
-            paletteTable.put(colorIndex, colors.getColor(colorIndex));
+            LuaTable paletteColorTable = new LuaTable();
+            paletteColorTable.put(colors.getColor(colorIndex));
+            paletteTable.put(colorIndex, paletteColorTable);
         }
         return paletteTable;
     }
 
     @Override
-    public String getName() {
+    public String toString() {
         return "bimg";
     }
 }

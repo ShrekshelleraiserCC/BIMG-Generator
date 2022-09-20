@@ -11,7 +11,7 @@ import java.util.Objects;
 
 public class QuantizeBlueNoise extends QuantizeNone {
     private final JSpinner colorSpread = new JSpinner(new SpinnerNumberModel(50, 5, 200, 5));
-    private BufferedImage noise;
+    private final BufferedImage noise;
 
     public QuantizeBlueNoise() {
         panel = new JPanel(new GridBagLayout());
@@ -31,16 +31,16 @@ public class QuantizeBlueNoise extends QuantizeNone {
 
     @Override
     protected int[][] applyDither(Color[][] RGBImage) {
-        int[][] paletteArr = new int[RGBImage[0].length][RGBImage.length];
-        int width = RGBImage[0].length;
-        int height = RGBImage.length;
+        int[][] paletteArr = new int[RGBImage.length][RGBImage[0].length];
+        int width = RGBImage.length;
+        int height = RGBImage[0].length;
         int colorSpread = (int) this.colorSpread.getValue();
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int colorOffset = (int) (new Color(noise.getRGB(x % noise.getWidth(),
                         y % noise.getHeight())).diff(new Color(0)) / 445 * colorSpread);
                 int colIndex = palette.getClosestPaletteIndex(
-                        RGBImage[y][x].add(new Color(colorOffset, colorOffset, colorOffset)));
+                        RGBImage[x][y].add(new Color(colorOffset, colorOffset, colorOffset)));
                 paletteArr[x][y] = colIndex;
             }
         }

@@ -1,5 +1,6 @@
 package com.masongulu.gui;
 
+import com.masongulu.colors.Color;
 import com.masongulu.colors.Palette;
 import com.masongulu.utils.KMeans;
 
@@ -11,9 +12,11 @@ public class PaletteManager extends JPanel {
     private final JComboBox<String> spinner = new JComboBox<>(new String[]{
             "Default",
             "K-Means",
-            "KM (1st frame)"
+            "KM (1st frame)",
+            "Custom"
     });
     private final StateMachine m;
+    private Color[] customPalette;
 
     public PaletteManager(StateMachine m) {
         super(new GridBagLayout());
@@ -46,6 +49,10 @@ public class PaletteManager extends JPanel {
             for (int i = 0; i < images.length; i++) {
                 palettes[i] = new Palette(KMeans.applyKMeans(images[i], 16));
             }
+//        } else if (("Custom").equals(selection)) {
+//            // load from file
+//            copyFirst = true;
+//            palettes[0] = new Palette(customPalette);
         } else {
             copyFirst = true;
             palettes[0] = new Palette(KMeans.applyKMeans(images[0], 16));

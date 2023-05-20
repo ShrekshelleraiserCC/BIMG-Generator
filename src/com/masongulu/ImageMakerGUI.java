@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ImageMakerGUI {
-    public static final String VERSION = "10.0";
+    public static final String VERSION = "10.1";
     private final JFrame frame = new JFrame("BIMG Generator " + VERSION);
     private final JPanel topBarPanel = new JPanel(new GridBagLayout());
     private final JCheckBox useCharacters = new JCheckBox("HD", true);

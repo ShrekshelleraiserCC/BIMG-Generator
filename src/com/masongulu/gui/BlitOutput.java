@@ -13,7 +13,8 @@ import java.io.File;
 
 public class BlitOutput extends JPanel {
     private final JComboBox<FormatBase> spinner = new JComboBox<>(new FormatBase[]{
-            new FormatBIMG(),
+            new FormatBIMG(true),
+            new FormatBIMG(false),
             new FormatBBF(),
             new FormatNFP()
     });

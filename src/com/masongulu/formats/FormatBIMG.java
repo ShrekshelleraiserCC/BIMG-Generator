@@ -10,8 +10,15 @@ import java.io.File;
 import java.io.IOException;
 
 public class FormatBIMG extends FormatBase {
+    private boolean textMode;
+
+    public FormatBIMG(boolean textMode) {
+        this.textMode = textMode;
+    }
+
     @Override
     public void save(BlitMap[] blitMaps, File filename) {
+        BlitMap.textMode = textMode;
         LuaTable table = new LuaTable();
         for (int frameIndex = 0; frameIndex < blitMaps.length; frameIndex++) {
             BlitMap frame = blitMaps[frameIndex];
@@ -30,6 +37,7 @@ public class FormatBIMG extends FormatBase {
             }
             table.put(frameTable);
         }
+        BlitMap.textMode = false;
         if (!blitMaps[0].getPalette().equals(Palette.defaultPalette)) {
             // First frame uses a non-default palette
             table.put("palette", writePalette(blitMaps[0].getPalette()));
@@ -58,6 +66,9 @@ public class FormatBIMG extends FormatBase {
 
     @Override
     public String toString() {
+        if (textMode) {
+            return "bimg (text)";
+        }
         return "bimg";
     }
 }

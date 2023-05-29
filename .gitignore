@@ -5,3 +5,6 @@ out/
 *.csv
 *.gif
 *.bbf
+.idea
+target/
+MyDir/

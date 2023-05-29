@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Property<T> {
-    private T val;
     private final ArrayList<IValueChange<T>> listeners = new ArrayList<>();
+    private T val;
 
     public Property() {
     }

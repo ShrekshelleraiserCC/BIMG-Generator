@@ -7,6 +7,7 @@ import com.masongulu.colors.PaletteImage;
 import java.util.Arrays;
 
 public class BlitMap {
+    public static boolean textMode = false;
     private final BlitChar[][] map; // Y, X map
     private final Palette palette;
 
@@ -96,7 +97,12 @@ public class BlitMap {
     public String getCharacter(int line) {
         StringBuilder str = new StringBuilder();
         for (BlitChar bc : map[line]) {
-            str.append(bc.getCharacter());
+            if (textMode) {
+                str.append("\\");
+                str.append((int) bc.getCharacter());
+            } else {
+                str.append(bc.getCharacter());
+            }
         }
         return str.toString();
     }

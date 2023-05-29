@@ -23,7 +23,7 @@ public class QuantizeBlueNoise extends QuantizeNone {
         c.gridx = 1;
         panel.add(colorSpread, c);
         try {
-            noise = ImageIO.read(Objects.requireNonNull(getClass().getResource("/resources/images/bluenoise.png")));
+            noise = ImageIO.read(Objects.requireNonNull(getClass().getResource("/images/bluenoise.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -3,8 +3,11 @@
     <output-path>$PROJECT_DIR$/out/artifacts/BIMG_jar</output-path>
     <root id="archive" name="BIMG.jar">
       <element id="module-output" name="BIMG" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../commons-io-2.11.0/commons-io-2.11.0.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/../commons-cli-1.5.0/commons-cli-1.5.0.jar" path-in-jar="/" />
+      <element id="library" level="project" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" />
+      <element id="library" level="project" name="Maven: commons-io:commons-io:2.11.0" />
+      <element id="library" level="project" name="Maven: commons-cli:commons-cli:1.5.0" />
+      <element id="library" level="project" name="Maven: junit:junit:4.10" />
+      <element id="library" level="project" name="Maven: org.hamcrest:hamcrest-core:1.1" />
     </root>
   </artifact>
 </component>

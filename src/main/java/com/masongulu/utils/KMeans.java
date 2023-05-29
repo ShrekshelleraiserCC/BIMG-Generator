@@ -85,9 +85,9 @@ class Centroid {
 }
 
 class Record {
+    private final Centroid[] centroids;
     public Color location; // location in RGB space
     private int closestCentroid = 0;
-    private final Centroid[] centroids;
 
     Record(Color color, Centroid[] centroids) {
         this.centroids = centroids;

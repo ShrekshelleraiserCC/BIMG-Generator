@@ -7,9 +7,9 @@ import com.masongulu.colors.PaletteImage;
 import java.util.Arrays;
 
 public class BlitMap {
+    public static boolean textMode = false;
     private final BlitChar[][] map; // Y, X map
     private final Palette palette;
-    public static boolean textMode = false;
 
     /**
      * @param image PaletteImage

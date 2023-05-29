@@ -10,11 +10,17 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class ImageMakerGUI {
-    public static final String VERSION = "10.1";
+    public static final String VERSION = "10.2";
     private final JFrame frame = new JFrame("BIMG Generator " + VERSION);
     private final JPanel topBarPanel = new JPanel(new GridBagLayout());
     private final JCheckBox useCharacters = new JCheckBox("HD", true);
     private final StateMachine m = new StateMachine();
+
+    public static void main(String[] args) {
+        ImageMakerGUI gui = new ImageMakerGUI();
+        gui.startGUI();
+
+    }
 
     public void startGUI() {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,12 +88,6 @@ public class ImageMakerGUI {
 
         frame.pack();
         frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        ImageMakerGUI gui = new ImageMakerGUI();
-        gui.startGUI();
-
     }
 }
 

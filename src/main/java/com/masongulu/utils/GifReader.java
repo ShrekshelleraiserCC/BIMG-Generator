@@ -83,7 +83,7 @@ public class GifReader {
         return rFrames;
     }
 
-    public static BufferedImage copyImage(BufferedImage bi){
+    public static BufferedImage copyImage(BufferedImage bi) {
         ColorModel cm = bi.getColorModel();
         boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
         WritableRaster raster = bi.copyData(null);
